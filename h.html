@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Birthday: Portal of Wonders</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Great+Vibes&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1a0f2e">
+<meta property="og:title" content="Birthday Portal of Wonders">
+<meta property="og:description" content="Magical countdown with dragons, enchanted flowers and celestial sparkles.">
+<style>
+  :root{
+    --bg1:#0b0613; --bg2:#1a0f2e; --accent:#a76cff; --accent2:#ff7ad9;
+    --gold:#ffd36e; --jade:#4df3c5; --white:#ffffff; --muted:#c9b8ff;
+    --shadow:0 10px 40px rgba(0,0,0,.45); --heart:#ff74b8;
+    --cosmic-blue:#2563eb; --cosmic-purple:#8b5cf6; --cosmic-pink:#ec4899;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--white);
+    background:
+      radial-gradient(1200px 1200px at 80% -20%, #2a1747 0%, transparent 60%),
+                radial-gradient(1000px 800px at -10% 120%, #2b0f3a 0%, transparent 60%),
+                linear-gradient(160deg, var(--bg1), var(--bg2));
+    overflow-x:hidden; position:relative;
+  }
+
+  /* DECORATIVE LAYERS */
+  canvas#glitter, canvas#fireworks { position:fixed; inset:0; z-index:-4; pointer-events:none; }
+  canvas#petals { position:fixed; inset:0; z-index:-3; pointer-events:none; }
+  canvas#cursorSparkle { position:fixed; inset:0; z-index:100; pointer-events:none; }
+  .glow{ position:fixed; inset:-20vmax; z-index:-5; pointer-events:none;
+    background: conic-gradient(from 180deg at 50% 50%, #0000, #7a39ff22, #ff3dbb22, #00ffd122, #0000);
+    filter: blur(60px) saturate(120%); animation: spin 18s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* MAGICAL OPENING TRANSITION */
+  .portal-opening{
+    position:fixed; inset:0; z-index:2000; pointer-events:none;
+    background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.3) 100%);
+    opacity:0; visibility:hidden; transition: opacity 2s ease-in-out;
+  }
+  .portal-opening.active{ opacity:1; visibility:visible; pointer-events:all; }
+  
+  .magic-circle{
+    position:absolute; left:50%; top:50%; width:100px; height:100px;
+    transform: translate(-50%, -50%) scale(0); border-radius:50%;
+    background: conic-gradient(from 0deg, #ff3dbb, #7a39ff, #00ffd1, #ffd36e, #ff3dbb);
+    animation: expandPortal 3s ease-out forwards;
+    filter: blur(2px) drop-shadow(0 0 40px rgba(255,255,255,0.8));
+  }
+  @keyframes expandPortal {
+    0% { transform: translate(-50%, -50%) scale(0); filter: blur(2px) drop-shadow(0 0 40px rgba(255,255,255,0.8)); }
+    50% { transform: translate(-50%, -50%) scale(8); filter: blur(1px) drop-shadow(0 0 60px rgba(255,255,255,1)); }
+    100% { transform: translate(-50%, -50%) scale(100); filter: blur(0px) drop-shadow(0 0 80px rgba(255,255,255,0.3)); opacity:0; }
+  }
+
+  .stardust{
+    position:absolute; width:100%; height:100%;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+      radial-gradient(2px 2px at 40px 70px, #ff7ad9, transparent),
+      radial-gradient(1px 1px at 90px 40px, #a76cff, transparent),
+      radial-gradient(1px 1px at 130px 80px, #4df3c5, transparent),
+      radial-gradient(2px 2px at 160px 30px, #ffd36e, transparent);
+    background-repeat: repeat; background-size: 200px 100px;
+    animation: starfall 8s linear infinite;
+    opacity:0;
+  }
+  .portal-opening.active .stardust{ animation: starfall 3s linear infinite, starfade 3s ease-in-out; }
+  @keyframes starfall { from { transform: translateY(-100px); } to { transform: translateY(calc(100vh + 100px)); } }
+  @keyframes starfade { 0%, 100% { opacity:0; } 50% { opacity:1; } }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:24px clamp(16px, 4vw, 48px); position:relative; z-index:10;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
+  .brand .logo{
+    width:42px; height:42px; border-radius:12px;
+    background: radial-gradient(circle at 30% 30%, #ff8bf1, #7a39ff 60%, #190a2c);
+    box-shadow: inset 0 0 18px #fff3, 0 0 30px #a76cff55; position:relative; overflow:hidden;
+  }
+  .brand .logo:after{
+    content:""; position:absolute; inset:0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g fill="%23ffd36e66"><circle cx="10" cy="10" r="2"/><circle cx="80" cy="30" r="1.5"/><circle cx="50" cy="60" r="1.8"/><circle cx="100" cy="90" r="2"/><circle cx="20" cy="100" r="1.5"/></g></svg>') center/cover no-repeat;
+    mix-blend-mode:screen; opacity:.8; animation: drift 10s ease-in-out infinite alternate;
+  }
+  @keyframes drift { to { transform: translate3d(10px,-8px,0) scale(1.05); } }
+  .brand .name{ font-weight:800; letter-spacing:.5px }
+  .brand .tag{ font-size:12px; color:var(--muted) }
+
+  .controls{ display:flex; gap:10px; align-items:center; }
+  .ctrl{
+    appearance:none; border:1px solid #ffffff22; background:#ffffff12; color:#fff;
+    padding:10px 14px; border-radius:12px; cursor:pointer; touch-action:manipulation;
+    transition: all 0.2s ease;
+  }
+  .ctrl:hover { background:#ffffff1a; border-color:#ffffff33; }
+  .ctrl.toggle{ display:inline-flex; align-items:center; gap:8px }
+  .ctrl.active{ 
+    background: linear-gradient(180deg, #a76cff22, #7a39ff22); 
+    border-color:#a76cff; 
+    box-shadow:0 0 0 2px #a76cff33 inset, 0 8px 24px #a76cff33; 
+  }
+
+  .hero{ display:grid; place-items:center; padding: clamp(20px,6vw,60px); text-align:center; gap:18px; position:relative; z-index:5; }
+  .title{
+    font-family:"Great Vibes", cursive; font-size: clamp(42px, 8vw, 100px);
+    line-height:1; color:var(--gold); text-shadow: 0 10px 30px #000, 0 0 20px #ffecb6aa;
+  }
+  .subtitle{ font-weight:300; color:var(--muted); margin-top:-6px; }
+
+  .countdown{ margin-top:8px; display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+  .unit{
+    min-width: min(42vw, 160px);
+    background: linear-gradient(180deg, #ffffff0f, #00000033);
+    border:1px solid #ffffff22; backdrop-filter: blur(6px);
+    border-radius:18px; padding:16px 18px; box-shadow: var(--shadow), 0 0 0 1px #a76cff22 inset;
+  }
+  .unit .num{
+    font-size: clamp(32px, 7vw, 64px); font-weight:800; letter-spacing:1px;
+    background: linear-gradient(180deg, #fff, #cdbbff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow: 0 6px 20px #0007;
+  }
+  .unit .label{ font-size:12px; letter-spacing:1.8px; text-transform:uppercase; color:#e6daff99 }
+  .note{ color:#e6daffcc; font-size:14px }
+
+  .dragon{
+    position:fixed; right:-2vw; bottom:-3vh; width:min(72vmin, 640px);
+    filter: drop-shadow(0 20px 40px #0008); transform: rotate(-4deg);
+    pointer-events:none; opacity:.45; z-index:2;
+  }
+  .dragon .eye{ transform-origin: center; animation: blink 6s infinite; }
+  @keyframes blink { 0%,97%,100%{ transform: scaleY(1) } 98%{ transform: scaleY(.1) } }
+
+  /* MAGICAL BIRTHDAY SURPRISE */
+  .birthday-surprise{
+    position:fixed; inset:0; z-index:1000; pointer-events:none;
+    background: linear-gradient(135deg, 
+      rgba(37,99,235,0.35) 0%, 
+      rgba(139,92,246,0.35) 35%, 
+      rgba(236,72,153,0.35) 70%, 
+      rgba(16,16,16,0.45) 100%);
+    opacity:0; visibility:hidden;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+  }
+  .birthday-surprise.open{ opacity:1; visibility:visible; pointer-events:all; }
+
+  .surprise-container{
+    display:grid; place-items:center; min-height:100vh; padding:20px; position:relative;
+    background: 
+      radial-gradient(800px 800px at 20% 30%, rgba(255,211,110,0.1) 0%, transparent 50%),
+      radial-gradient(600px 600px at 80% 70%, rgba(167,108,255,0.15) 0%, transparent 50%),
+      radial-gradient(400px 400px at 50% 20%, rgba(77,243,197,0.1) 0%, transparent 50%);
+  }
+
+  .birthday-card{
+    width: min(95vw, 900px); max-height:90vh; overflow:hidden;
+    background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(20px); border: 2px solid rgba(255,255,255,0.2);
+    border-radius:30px; box-shadow: 
+      0 25px 50px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      0 0 100px rgba(167,108,255,0.3);
+    position:relative; overflow-y:auto;
+    transform: scale(0.8) translateY(100px); opacity:0;
+    transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .birthday-surprise.open .birthday-card{ transform: scale(1) translateY(0); opacity:1; }
+
+  .card-header{
+    text-align:center; padding:40px 30px 20px; position:relative;
+    background: linear-gradient(135deg, rgba(255,211,110,0.1), rgba(167,108,255,0.1));
+  }
+
+  .birthday-crown{
+    display:inline-block; font-size:60px; margin-bottom:15px;
+    filter: drop-shadow(0 0 20px rgba(255,211,110,0.8));
+    animation: crownFloat 3s ease-in-out infinite;
+  }
+  @keyframes crownFloat { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
+
+  .birthday-title{
+    font-family: "Dancing Script", cursive; font-size: clamp(42px, 7vw, 70px);
+    font-weight:700; color:#ffd36e; text-align:center; margin:0 0 10px 0;
+    text-shadow: 0 0 30px rgba(255,211,110,0.5), 0 5px 15px rgba(0,0,0,0.3);
+    background: linear-gradient(45deg, #ffd36e, #ff7ad9, #a76cff, #4df3c5);
+    background-size: 300% 300%; -webkit-background-clip:text; background-clip:text;
+    color:transparent; animation: gradientShift 4s ease-in-out infinite;
+  }
+  @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+  .birthday-subtitle{
+    font-size:18px; color:rgba(255,255,255,0.8); margin:0 0 20px 0;
+    font-weight:300; letter-spacing:1px;
+  }
+
+  .card-content{
+    padding:30px; display:grid; gap:30px; align-content:start;
+  }
+
+  .wish-poem{
+    font-size:18px; line-height:1.8; color:rgba(255,255,255,0.9);
+    text-align:center; font-weight:300; letter-spacing:0.5px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    padding:25px; border-radius:20px; border:1px solid rgba(255,255,255,0.2);
+    position:relative; overflow:hidden;
+  }
+  .wish-poem:before{
+    content:""; position:absolute; top:-2px; left:-2px; right:-2px; bottom:-2px;
+    background: linear-gradient(45deg, #ffd36e, #a76cff, #ff7ad9, #4df3c5);
+    border-radius:20px; z-index:-1; opacity:0.3;
+    animation: borderGlow 3s linear infinite;
+  }
+  @keyframes borderGlow { 0%, 100% { opacity:0.3; } 50% { opacity:0.6; } }
+
+  .magical-blessing{
+    text-align:center; color:#4df3c5; font-size:16px; font-weight:400;
+    min-height:50px; padding:20px; border-radius:15px;
+    background: linear-gradient(135deg, rgba(77,243,197,0.1), rgba(167,108,255,0.1));
+    border:1px solid rgba(77,243,197,0.3);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .birthday-actions{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;
+    margin-top:20px;
+  }
+
+  .magic-btn{
+    padding:15px 25px; border-radius:50px; border:none; cursor:pointer;
+    font-family:inherit; font-weight:600; font-size:14px; letter-spacing:0.5px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position:relative; overflow:hidden; text-transform:uppercase;
+  }
+  .magic-btn:before{
+    content:""; position:absolute; inset:0; background:inherit; opacity:0;
+    transition:opacity 0.3s ease;
+  }
+  .magic-btn:hover:before{ opacity:1; }
+  .magic-btn:hover{ transform: translateY(-3px) scale(1.02); }
+  .magic-btn:active{ transform: translateY(-1px) scale(0.98); }
+
+  .btn-confetti{
+    background: linear-gradient(135deg, #ff7ad9, #a76cff);
+    color:white; box-shadow: 0 10px 25px rgba(255,122,217,0.4);
+  }
+  .btn-fireworks{
+    background: linear-gradient(135deg, #ffd36e, #ff7ad9);
+    color:#2a1747; box-shadow: 0 10px 25px rgba(255,211,110,0.4);
+  }
+  .btn-download{
+    background: linear-gradient(135deg, #4df3c5, #a76cff);
+    color:white; box-shadow: 0 10px 25px rgba(77,243,197,0.4);
+  }
+
+  .floating-elements{
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  }
+  .floating-heart, .floating-star{
+    position:absolute; font-size:20px; opacity:0.7;
+    animation: floatUp 6s linear infinite;
+  }
+  .floating-heart{ color:#ff74b8; }
+  .floating-star{ color:#ffd36e; }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity:0; }
+    10% { opacity:0.7; }
+    90% { opacity:0.7; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity:0; }
+  }
+
+  .close-surprise{
+    position:absolute; top:20px; right:20px; width:40px; height:40px;
+    background: rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3);
+    border-radius:50%; color:white; font-size:20px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: all 0.3s ease; backdrop-filter: blur(10px);
+  }
+  .close-surprise:hover{ background: rgba(255,255,255,0.3); transform: scale(1.1); }
+
+  .controls-inline{
+    position:absolute; top:20px; left:20px; display:flex; gap:10px;
+  }
+  .ctrl-small{
+    width:40px; height:40px; border-radius:50%; font-size:16px;
+    background: rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3);
+    color:white; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition: all 0.2s ease; backdrop-filter: blur(10px);
+  }
+  .ctrl-small:hover{ background: rgba(255,255,255,0.3); }
+  .ctrl-small.active{ background: rgba(167,108,255,0.4); border-color: #a76cff; }
+
+  footer{ padding:26px; text-align:center; color:#e6daff88; font-size:12px; position:relative; z-index:5; }
+
+  .candle-mode .glow{ filter: blur(70px) saturate(130%); animation-duration: 32s; }
+
+  /* Candle overlay to make the effect obvious */
+  #candleOverlay{ position:fixed; inset:0; pointer-events:none; z-index:90; opacity:0; visibility:hidden; transition:opacity .4s ease, visibility .4s ease;
+    background: radial-gradient(800px 800px at 50% 60%, rgba(255,197,110,0.08) 0%, rgba(0,0,0,0.25) 70%);
+    mix-blend-mode:soft-light; }
+  .candle-mode #candleOverlay{ opacity:1; visibility:visible; }
+
+  /* Small debug badge */
+  
+</style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+  <canvas id="glitter" aria-hidden="true"></canvas>
+  <canvas id="petals" aria-hidden="true"></canvas>
+  <canvas id="fireworks" aria-hidden="true"></canvas>
+  <canvas id="cursorSparkle" aria-hidden="true"></canvas>
+  <div id="candleOverlay" aria-hidden="true"></div>
+
+  <!-- Portal Opening Animation -->
+  <div class="portal-opening" id="portalOpening">
+    <div class="magic-circle"></div>
+    <div class="stardust"></div>
+  </div>
+
+  <header>
+    <a class="brand" href="#">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <div class="name">Birthday Portal</div>
+        <div class="tag">Dragons, enchanted flowers & cosmic sparkles</div>
+      </div>
+    </a>
+    <div class="controls">
+      <button class="ctrl toggle" id="musicBtn" aria-pressed="false">🎵 Music</button>
+      <button class="ctrl toggle" id="candleBtn" aria-pressed="false">🕯️ Candlelight</button>
+      <button class="ctrl toggle active" id="sparkBtn" aria-pressed="true">✨ Sparkles</button>
+    </div>
+  </header>
+
+  <main class="hero">
+    <h1 class="title">Treasure Countdown</h1>
+    <p class="subtitle">The portal opens on November 12th, 2025 at 13:00</p>
+    <section class="countdown" role="timer" aria-live="polite">
+      <div class="unit"><div class="num" id="d">00</div><div class="label">days</div></div>
+      <div class="unit"><div class="num" id="h">00</div><div class="label">hours</div></div>
+      <div class="unit"><div class="num" id="m">00</div><div class="label">minutes</div></div>
+      <div class="unit"><div class="num" id="s">00</div><div class="label">seconds</div></div>
+    </section>
+    <p class="note">When time arrives, the guardian dragon will open the chest and you'll see the surprise.</p>
+  </main>
+
+  <svg class="dragon" viewBox="0 0 600 400" aria-hidden="true">
+    <defs><linearGradient id="dragG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9b6cff"/><stop offset="1" stop-color="#ff7ad9"/></linearGradient></defs>
+    <path d="M420 260c50-20 90-70 80-110-6-22-28-36-54-38-30-2-60 12-78 36-14-30-46-50-84-50-60 0-110 44-110 98 0 8 1 16 3 24-30 6-53 32-53 63 0 36 31 65 70 65 16 0 31-5 43-13 18 17 44 28 73 28 49 0 90-27 100-63 3 10 6 20 10 30 4 8 13 13 23 13 14 0 26-10 29-23 3-16-7-29-24-31-11-2-22-4-28-9z" fill="url(#dragG)" opacity=".8"/>
+    <circle class="eye" cx="324" cy="200" r="8" fill="#fff"/>
+  </svg>
+
+  <!-- Magical Birthday Surprise -->
+  <section class="birthday-surprise" id="birthdaySurprise" aria-hidden="true">
+    <div class="surprise-container">
+      <div class="floating-elements" id="floatingElements"></div>
+      
+      <div class="birthday-card" role="dialog" aria-modal="true" aria-labelledby="birthdayTitle">
+        <button class="close-surprise" id="closeSurprise" title="Close surprise">×</button>
+        
+        <div class="controls-inline">
+          <button class="ctrl-small" id="musicBtnInline" aria-pressed="false" title="Music">🎵</button>
+          <button class="ctrl-small" id="candleBtnInline" aria-pressed="false" title="Candlelight">🕯️</button>
+          <button class="ctrl-small active" id="sparkBtnInline" aria-pressed="true" title="Sparkles">✨</button>
+        </div>
+
+        <div class="card-header">
+          <div class="birthday-crown">👑</div>
+          <h2 class="birthday-title" id="birthdayTitle">Happy Birthday!</h2>
+          <p class="birthday-subtitle">Your magical moment has arrived</p>
+        </div>
+
+        <div class="card-content">
+          <div class="wish-poem">
+            Dragons dance across the midnight sky,<br>
+            Jeweled flowers kiss the wind with purple light.<br>
+            Today time gives you a knowing wink<br>
+            And the universe raises its cosmic cup.<br><br>
+            
+            May your steps dance with stardust,<br>
+            May you laugh with sparkle and stellar calm,<br>
+            May every wish find its wings<br>
+            And each day gift you wonders untold.
+      </div>
+
+          <div class="magical-blessing">
+            <span id="blessTyper" class="typer"></span>
+            </div>
+
+          <div class="birthday-actions">
+            <button class="magic-btn btn-confetti" id="btnConfetti">✨ Confetti Rain</button>
+            <button class="magic-btn btn-fireworks" id="btnFireworks">🎆 Fireworks Show</button>
+            <button class="magic-btn btn-download" id="btnDownload">💎 Magic Voucher</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Crafted with magic, sparkles & friendly creatures.</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.2/confetti.browser.min.js"></script>
+
+  <script>
+  // GLOBALS
+  let opened = false;
+  let countdownTimer = null;
+  let confettiPulseId = 0;
+  let blessingCycleId = 0;
+  let sparkleOn = true;
+  let musicPlaying = false;
+  let audioContext = null;
+  let currentOscillator = null;
+
+  // TARGET DATE - Fixed constructor (months are 0-indexed)
+  const target = new Date(2025, 10, 12, 13, 0, 0); // November 12, 2025, 1:00 PM
+
+  // BLESSINGS ARRAY
+  const blessings = [
+    'May every sunrise find you with reasons to smile.',
+    'May life embrace you with patience, sparkle and new adventures.',
+    'May your dreams have dragon wings and flower calm.',
+    'May you always be surrounded by a sky of good people.',
+    'May luck wink at you and time play in your favor.',
+    'May your heart always find home in beautiful details.'
+  ];
+
+  // DOM ELEMENTS
+  const elD = document.getElementById('d');
+  const elH = document.getElementById('h');
+  const elM = document.getElementById('m');
+  const elS = document.getElementById('s');
+  const portal = document.getElementById('portalOpening');
+  const surprise = document.getElementById('birthdaySurprise');
+
+  // UTILITY FUNCTIONS
+  function pad(n) { 
+    return String(n).padStart(2,'0'); 
+  }
+
+  // Update subtitle with target date
+  function updateSubtitle() {
+    try {
+      const sub = document.querySelector('.subtitle');
+      if(sub){
+        const fmt = new Intl.DateTimeFormat('en-US', { 
+          year:'numeric', month:'long', day:'2-digit', hour:'2-digit', minute:'2-digit' 
+        });
+        sub.textContent = 'The portal opens on ' + fmt.format(target);
+      }
+    } catch(err) {
+      console.warn('Could not update subtitle:', err);
+    }
+  }
+
+  // COUNTDOWN FUNCTION
+  function tick(){
+    try {
+      const now = Date.now();
+      const diff = target.getTime() - now;
+      
+      if (diff <= 0) {
+        // Time's up!
+        if (!opened) {
+      openSurprise();
+        }
+        if (countdownTimer) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+      return;
+    }
+      
+      const totalSeconds = Math.floor(diff / 1000);
+      const seconds = totalSeconds % 60;
+      const minutes = Math.floor(totalSeconds / 60) % 60;
+      const hours = Math.floor(totalSeconds / 3600) % 24;
+      const days = Math.floor(totalSeconds / 86400);
+      
+      // Update display
+      if (elD) elD.textContent = pad(days);
+      if (elH) elH.textContent = pad(hours);
+      if (elM) elM.textContent = pad(minutes);
+      if (elS) elS.textContent = pad(seconds);
+      
+    } catch(err) {
+      console.error('Countdown tick error:', err);
+    }
+  }
+
+  // START COUNTDOWN
+  function startCountdown() {
+    tick(); // Initial tick
+    countdownTimer = setInterval(tick, 1000); // Update every second
+    
+    // Check if we should already be open
+    if (Date.now() >= target.getTime()) {
+      openSurprise();
+    }
+  }
+
+  // OPEN SURPRISE FUNCTION
+  function openSurprise() {
+    if (opened) return;
+    opened = true;
+    
+    console.log('Opening surprise!');
+    
+    // Start magical portal animation
+    portal.classList.add('active');
+    
+    // After portal animation, show birthday surprise
+    setTimeout(() => {
+      portal.style.display = 'none';
+      surprise.classList.add('open');
+      surprise.setAttribute('aria-hidden','false');
+      
+      // Start magical effects
+    celebration();
+      setTimeout(() => {
+        if (window.triggerFireworks) {
+          window.triggerFireworks();
+          setTimeout(() => window.triggerFireworks(), 500);
+        }
+      }, 350);
+      
+      typeBlessing();
+      blessingCycleId = setInterval(typeBlessing, 9000);
+      
+      confettiPulseId = setInterval(() => {
+        if (window.confetti) {
+          confetti({ 
+            particleCount: 18, 
+            spread: 70, 
+            origin: { x: Math.random(), y: Math.random() * 0.2 + 0.05 }, 
+            colors: ['#ffd36e','#a76cff','#ff7ad9','#4df3c5','#ffffff'] 
+          });
+        }
+      }, 4200);
+      
+      startFloatingElements();
+      
+      // Focus management
+      setTimeout(() => {
+        const firstBtn = document.getElementById('btnConfetti');
+        if (firstBtn) firstBtn.focus();
+      }, 500);
+      
+    }, 2500);
+  }
+  
+  // CLOSE SURPRISE FUNCTION
+  function closeSurprise() {
+    if (!opened) return;
+    surprise.classList.remove('open');
+    surprise.setAttribute('aria-hidden','true');
+    
+    // Clear intervals
+    if (confettiPulseId) { 
+      clearInterval(confettiPulseId); 
+      confettiPulseId = 0; 
+    }
+    if (blessingCycleId) { 
+      clearInterval(blessingCycleId); 
+      blessingCycleId = 0; 
+    }
+    
+    // Reset for next opening
+    setTimeout(() => {
+      portal.style.display = 'block';
+      portal.classList.remove('active');
+      opened = false;
+    }, 1000);
+  }
+
+  // FLOATING ELEMENTS
+  function startFloatingElements() {
+    const container = document.getElementById('floatingElements');
+    if (!container) return;
+    
+    const elements = ['💖', '⭐', '✨', '🌟', '💫', '🎈', '🎉', '🌸'];
+    
+    function createFloatingElement() {
+      const el = document.createElement('div');
+      el.textContent = elements[Math.floor(Math.random() * elements.length)];
+      el.className = Math.random() > 0.5 ? 'floating-heart' : 'floating-star';
+      el.style.left = Math.random() * 100 + '%';
+      el.style.animationDelay = Math.random() * 2 + 's';
+      el.style.animationDuration = (4 + Math.random() * 4) + 's';
+      container.appendChild(el);
+      
+      setTimeout(() => {
+        if (el && el.parentNode) {
+          el.remove();
+        }
+      }, 8000);
+    }
+    
+    // Create floating elements periodically
+    const floatingInterval = setInterval(createFloatingElement, 800);
+    
+    // Initial burst
+    for (let i = 0; i < 5; i++) {
+      setTimeout(createFloatingElement, i * 200);
+    }
+  }
+
+  // TYPEWRITER EFFECT
+  function typewriter(el, text, speed = 25) {
+    if (!el) return;
+    el.textContent = ''; 
+    let i = 0; 
+    const id = setInterval(() => { 
+      if (i < text.length) {
+        el.textContent += text[i++]; 
+      } else {
+        clearInterval(id); 
+      }
+    }, speed);
+  }
+  
+  function typeBlessing() {
+    const el = document.getElementById('blessTyper');
+    if (!el) return;
+    const msg = blessings[Math.floor(Math.random() * blessings.length)];
+    typewriter(el, msg, 22);
+  }
+
+  // CONFETTI CELEBRATION
+  function celebration() {
+    if (!window.confetti) return;
+    
+    const duration = 1100;
+    const end = Date.now() + duration;
+    
+    (function frame() {
+      confetti({
+        particleCount: 6,
+        spread: 70,
+        startVelocity: 50,
+        scalar: 1.1,
+        ticks: 200,
+        origin: { x: Math.random(), y: Math.random() * 0.2 + 0.1 },
+        colors: ['#ffd36e','#a76cff','#ff7ad9','#4df3c5','#ffffff']
+      });
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+
+  // CONTROL SYNCHRONIZATION
+  const controlGroups = {
+    music: ['musicBtn','musicBtnInline'],
+    candle: ['candleBtn','candleBtnInline'],
+    spark: ['sparkBtn','sparkBtnInline']
+  };
+  
+  function syncControls(group, state) {
+    if (!controlGroups[group]) return;
+    controlGroups[group].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) { 
+        btn.classList.toggle('active', state); 
+        btn.setAttribute('aria-pressed', String(state)); 
+      }
+    });
+  }
+
+  // MUSIC TOGGLE
+  async function toggleMusic() {
+    try {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      
+      if (!musicPlaying) {
+        // Simple ambient tone generation
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        
+        oscillator.start();
+        currentOscillator = oscillator;
+        musicPlaying = true;
+        
+        syncControls('music', true);
+        
+        // Stop after 3 seconds
+        setTimeout(() => {
+          if (currentOscillator) {
+            currentOscillator.stop();
+            musicPlaying = false;
+            syncControls('music', false);
+            currentOscillator = null;
+          }
+        }, 3000);
+        
+      } else {
+        if (currentOscillator) {
+          currentOscillator.stop();
+          musicPlaying = false;
+          currentOscillator = null;
+        }
+        syncControls('music', false);
+      }
+    } catch(err) {
+      console.log('Audio not supported:', err);
+      syncControls('music', false);
+    }
+  }
+  
+  // CANDLE TOGGLE
+  function toggleCandle() {
+    const active = !document.documentElement.classList.contains('candle-mode');
+    document.documentElement.classList.toggle('candle-mode', active);
+    syncControls('candle', active);
+  }
+  
+  // SPARKLE TOGGLE
+  function toggleSpark() { 
+    sparkleOn = !sparkleOn; 
+    syncControls('spark', sparkleOn); 
+  }
+
+  // DOWNLOAD VOUCHER
+  function downloadVoucher() {
+    const W = 1200, H = 700, pad = 48;
+    const canvas = document.createElement('canvas'); 
+    canvas.width = W; 
+    canvas.height = H; 
+    const ctx = canvas.getContext('2d');
+
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, W, H);
+    gradient.addColorStop(0, '#2563eb'); 
+    gradient.addColorStop(0.5, '#8b5cf6'); 
+    gradient.addColorStop(1, '#ec4899'); 
+    ctx.fillStyle = gradient; 
+    ctx.fillRect(0, 0, W, H);
+
+    // Decorative border
+    ctx.strokeStyle = '#ffd36e'; 
+    ctx.lineWidth = 8; 
+    ctx.strokeRect(pad, pad, W - pad * 2, H - pad * 2);
+    
+    // Title
+    ctx.fillStyle = '#ffd36e';
+    ctx.font = 'bold 72px serif'; 
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ Birthday Magic Voucher ✨', W/2, 150);
+    
+    // Subtitle
+    ctx.fillStyle = '#ffffff'; 
+    ctx.font = 'bold 36px sans-serif'; 
+    ctx.fillText('Wonder Unlocked', W/2, 220);
+    
+    // Content
+    ctx.fillStyle = 'rgba(255,255,255,0.95)'; 
+    ctx.font = '24px sans-serif';
+    const lines = [
+      'This magical voucher grants you:',
+      '• A celebration filled with laughter & sparkles',
+      '• A wish that comes true with fireworks',
+      '• A dragon hug and jeweled flowers',
+      '• Unlimited cosmic wonder',
+      '',
+      'With love, today and always. ✨'
+    ];
+    let y = 290; 
+    for (const line of lines) { 
+      ctx.fillText(line, W/2, y); 
+      y += 40; 
+    }
+    
+    // Footer
+    ctx.font = '18px sans-serif'; 
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; 
+    ctx.fillText('Valid on your birthday. Non-transferable. Infinite happiness included.', W/2, H - 60);
+    
+    // Download
+    try {
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url; 
+      a.download = 'birthday_magic_voucher.png'; 
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch(err) {
+      console.error('Download failed:', err);
+    }
+  }
+
+  // EVENT HANDLERS
+  function handleClick(e) {
+    const target = e.target;
+    let btn = target.closest ? target.closest('button[id]') : null;
+    
+    if (!btn && target.tagName === 'BUTTON' && target.id) {
+      btn = target;
+    }
+    
+    if (!btn) return;
+    
+    const id = btn.id;
+    console.log('Button clicked:', id);
+
+    switch(id) {
+      case 'musicBtn':
+      case 'musicBtnInline':
+        toggleMusic();
+        break;
+      case 'candleBtn':
+      case 'candleBtnInline':
+        toggleCandle();
+        break;
+      case 'sparkBtn':
+      case 'sparkBtnInline':
+        toggleSpark();
+        break;
+      case 'btnConfetti':
+        celebration();
+        break;
+      case 'btnFireworks':
+        if (window.triggerFireworks) {
+          window.triggerFireworks();
+        }
+        break;
+      case 'btnDownload':
+        downloadVoucher();
+        break;
+      case 'closeSurprise':
+        closeSurprise();
+        break;
+    }
+  }
+
+  // DECORATIVE EFFECTS - Glitter animation
+  function initGlitter() {
+    const canvas = document.getElementById('glitter');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    
+    function resize() {
+      w = canvas.width = innerWidth * dpr; 
+      h = canvas.height = innerHeight * dpr; 
+      canvas.style.width = innerWidth + 'px'; 
+      canvas.style.height = innerHeight + 'px'; 
+    }
+    
+    resize(); 
+    window.addEventListener('resize', resize);
+    
+    const particles = Array.from({length: 160}).map(() => ({
+      x: Math.random() * w, 
+      y: Math.random() * h, 
+      r: Math.random() * 1.8 + 0.4, 
+      speed: Math.random() * 0.6 + 0.2, 
+      hue: Math.random() * 360 
+    }));
+    
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      
+      for (const p of particles) {
+        p.y += p.speed * 0.6;
+        p.x += Math.sin((p.y + p.x) * 0.0008) * 0.3;
+        
+        if (p.y > h + 10) { 
+          p.y = -10; 
+          p.x = Math.random() * w; 
+        }
+        
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+        grad.addColorStop(0, `hsla(${p.hue},90%,70%,.9)`);
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+  }
+
+  // Petals animation
+  function initPetals() {
+    const canvas = document.getElementById('petals');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    
+    function resize() { 
+      w = canvas.width = innerWidth * dpr; 
+      h = canvas.height = innerHeight * dpr; 
+      canvas.style.width = innerWidth + 'px'; 
+      canvas.style.height = innerHeight + 'px'; 
+    }
+    
+    resize(); 
+    window.addEventListener('resize', resize);
+    
+    const petals = Array.from({length: 40}).map(() => ({ 
+      x: Math.random() * w, 
+      y: Math.random() * h, 
+      vx: (Math.random() * 0.6 - 0.3), 
+      vy: Math.random() * 0.4 + 0.2, 
+      r: Math.random() * 8 + 6, 
+      rot: Math.random() * Math.PI 
+    }));
+    
+    function drawPetal(x, y, r, rot, color) {
+      ctx.save(); 
+      ctx.translate(x, y); 
+      ctx.rotate(rot);
+      ctx.fillStyle = color; 
+      ctx.beginPath(); 
+      ctx.moveTo(0, 0); 
+      ctx.quadraticCurveTo(r, -r * 0.2, 0, -r * 1.6); 
+      ctx.quadraticCurveTo(-r, -r * 0.2, 0, 0); 
+      ctx.fill(); 
+      ctx.restore();
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      
+      for (const p of petals) {
+        p.x += p.vx; 
+        p.y += p.vy; 
+        p.rot += 0.01;
+        
+        if (p.y > h + 20) { 
+          p.y = -20; 
+          p.x = Math.random() * w; 
+        }
+        if (p.x < -20) p.x = w + 20; 
+        if (p.x > w + 20) p.x = -20;
+        
+        drawPetal(p.x, p.y, p.r, p.rot, `hsla(${300 + Math.random() * 40},80%,70%,.7)`);
+      }
+      
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+  }
+
+  // FIREWORKS SYSTEM
+  function initFireworks() {
+    const canvas = document.getElementById('fireworks');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    
+    function resize() {
+      w = canvas.width = innerWidth * dpr;
+      h = canvas.height = innerHeight * dpr;
+      canvas.style.width = innerWidth + 'px';
+      canvas.style.height = innerHeight + 'px';
+    }
+    
+    resize(); 
+    window.addEventListener('resize', resize);
+
+    const bursts = [];
+    
+    function createBurst() {
+      const x = Math.random() * w * 0.8 + w * 0.1;
+      const y = Math.random() * h * 0.4 + h * 0.1;
+      const hue = Math.random() * 360;
+      const count = 140;
+      const particles = [];
+      
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2;
+        const speed = Math.random() * 3.2 + 1.8;
+        particles.push({
+          x, y, 
+          vx: Math.cos(angle) * speed, 
+          vy: Math.sin(angle) * speed, 
+          life: 0, 
+          maxLife: 60 + Math.random() * 40,
+          hue: hue + (Math.random() * 40 - 20)
+        });
+      }
+      
+      bursts.push(particles);
+    }
+
+    function animate() {
+      ctx.fillStyle = 'rgba(0,0,0,.16)';
+      ctx.fillRect(0, 0, w, h);
+      
+      for (let i = bursts.length - 1; i >= 0; i--) {
+        const particles = bursts[i];
+        let allDead = true;
+        
+        for (const p of particles) {
+          p.life++;
+          p.vy += 0.02; 
+          p.x += p.vx; 
+          p.y += p.vy;
+          
+          if (p.life < p.maxLife) {
+            allDead = false;
+            const alpha = Math.max(0, 1 - p.life / p.maxLife);
+          ctx.beginPath();
+            ctx.fillStyle = `hsla(${p.hue}, 90%, 65%, ${alpha})`;
+            ctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+        
+        if (allDead) {
+          bursts.splice(i, 1);
+        }
+      }
+      
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    // Make burst function globally available
+    window.triggerFireworks = function() { 
+      for (let i = 0; i < 2; i++) {
+        setTimeout(createBurst, i * 120);
+      }
+    };
+  }
+
+  // CURSOR SPARKLES
+  function initCursorSparkles() {
+    const canvas = document.getElementById('cursorSparkle');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const MAX_PARTICLES = 60; 
+    const particles = [];
+    
+    function resize() {
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    }
+    
+    resize();
+    window.addEventListener('resize', resize);
+    
+    window.addEventListener('pointermove', (e) => {
+      if (!sparkleOn) return;
+      
+      for (let i = 0; i < 3; i++) {
+        particles.push({ 
+          x: e.clientX, 
+          y: e.clientY, 
+          vx: (Math.random() - 0.5) * 1.2, 
+          vy: (Math.random() - 0.8) * 1.2 - 0.6, 
+          life: 0, 
+          maxLife: 36 + Math.random() * 12, 
+          color: Math.random() < 0.5 ? 'rgba(255,116,184,' : 'rgba(255,211,110,' 
+        });
+      }
+      
+      if (particles.length > MAX_PARTICLES) {
+        particles.splice(0, particles.length - MAX_PARTICLES);
+      }
+    });
+    
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i]; 
+        p.life++; 
+        p.x += p.vx; 
+        p.y += p.vy; 
+        p.vy += 0.03;
+        
+        const alpha = Math.max(0, 1 - p.life / p.maxLife);
+        ctx.fillStyle = p.color + alpha + ')';
+      ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2); 
+      ctx.fill();
+        
+        if (p.life > p.maxLife) {
+          particles.splice(i, 1);
+        }
+      }
+      
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+  }
+
+  // INITIALIZATION
+  function initializeApp() {
+    console.log('Initializing Birthday Portal...');
+    
+    try {
+      // Update subtitle with correct date
+      updateSubtitle();
+      
+      // Set up event listeners
+      document.addEventListener('click', handleClick);
+      
+      // Keyboard controls
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && opened) {
+          closeSurprise();
+        } else if (e.key === 'Enter' && !opened && Date.now() > target.getTime() - 1000) {
+          openSurprise();
+        }
+      });
+      
+      // Initialize visual effects
+      initGlitter();
+      initPetals();
+      initFireworks();
+      initCursorSparkles();
+      
+      // Start countdown
+      startCountdown();
+      
+      console.log('✨ Birthday Portal initialized successfully! ✨');
+      
+    } catch(err) {
+      console.error('Initialization error:', err);
+    }
+  }
+
+  // Start when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+  } else {
+    initializeApp();
+  }
+
+  // Global error handler
+  window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+  });
+
+  </script>
+</body>
+</html>
