@@ -41,7 +41,7 @@
   /* MAGICAL OPENING TRANSITION */
   .portal-opening{
     position:fixed; inset:0; z-index:2000; pointer-events:none;
-    background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.3) 100%);
+    background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.95) 100%);
     opacity:0; visibility:hidden; transition: opacity 2s ease-in-out;
   }
   .portal-opening.active{ opacity:1; visibility:visible; pointer-events:all; }
@@ -143,10 +143,10 @@
   .birthday-surprise{
     position:fixed; inset:0; z-index:1000; pointer-events:none;
     background: linear-gradient(135deg, 
-      rgba(37,99,235,0.35) 0%, 
-      rgba(139,92,246,0.35) 35%, 
-      rgba(236,72,153,0.35) 70%, 
-      rgba(16,16,16,0.45) 100%);
+      rgba(37,99,235,0.95) 0%, 
+      rgba(139,92,246,0.95) 35%, 
+      rgba(236,72,153,0.95) 70%, 
+      rgba(16,16,16,0.98) 100%);
     opacity:0; visibility:hidden;
     transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
   }
@@ -299,11 +299,11 @@
 
   footer{ padding:26px; text-align:center; color:#e6daff88; font-size:12px; position:relative; z-index:5; }
 
-  .candle-mode .glow{ filter: blur(70px) saturate(130%); animation-duration: 32s; }
+  .candle-mode .glow{ filter: blur(90px) saturate(160%); animation-duration: 32s; }
 
   /* Candle overlay to make the effect obvious */
   #candleOverlay{ position:fixed; inset:0; pointer-events:none; z-index:90; opacity:0; visibility:hidden; transition:opacity .4s ease, visibility .4s ease;
-    background: radial-gradient(800px 800px at 50% 60%, rgba(255,197,110,0.08) 0%, rgba(0,0,0,0.25) 70%);
+    background: radial-gradient(800px 800px at 50% 60%, rgba(255,197,110,0.12) 0%, rgba(0,0,0,0.5) 70%);
     mix-blend-mode:soft-light; }
   .candle-mode #candleOverlay{ opacity:1; visibility:visible; }
 
@@ -678,47 +678,36 @@
   // MUSIC TOGGLE
   async function toggleMusic() {
     try {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      
       if (!musicPlaying) {
-        // Simple ambient tone generation
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        // Create audio element for local file
+        const audio = new Audio('Eden’s Gentle Glow.mp3'); // Cambia 'tu-cancion.mp3' por el nombre de tu archivo
+        audio.volume = 0.3; // Ajusta el volumen (0.0 a 1.0)
+        audio.loop = true; // Repetir la canción
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        
-        oscillator.start();
-        currentOscillator = oscillator;
+        await audio.play();
+        currentOscillator = audio; // Reutilizamos esta variable para el audio
         musicPlaying = true;
         
         syncControls('music', true);
         
-        // Stop after 3 seconds
-        setTimeout(() => {
-          if (currentOscillator) {
-            currentOscillator.stop();
-            musicPlaying = false;
-            syncControls('music', false);
-            currentOscillator = null;
-          }
-        }, 3000);
+        // Manejar cuando termine la canción (si no está en loop)
+        audio.addEventListener('ended', () => {
+          musicPlaying = false;
+          syncControls('music', false);
+          currentOscillator = null;
+        });
         
       } else {
         if (currentOscillator) {
-          currentOscillator.stop();
+          currentOscillator.pause();
+          currentOscillator.currentTime = 0; // Reiniciar al inicio
           musicPlaying = false;
           currentOscillator = null;
         }
         syncControls('music', false);
       }
     } catch(err) {
-      console.log('Audio not supported:', err);
+      console.log('Error playing audio:', err);
       syncControls('music', false);
     }
   }
