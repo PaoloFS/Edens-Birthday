@@ -131,13 +131,28 @@
   .unit .label{ font-size:12px; letter-spacing:1.8px; text-transform:uppercase; color:#e6daff99 }
   .note{ color:#e6daffcc; font-size:14px }
 
-  .dragon{
-    position:fixed; right:-2vw; bottom:-3vh; width:min(72vmin, 640px);
-    filter: drop-shadow(0 20px 40px #0008); transform: rotate(-4deg);
-    pointer-events:none; opacity:.45; z-index:2;
-  }
-  .dragon .eye{ transform-origin: center; animation: blink 6s infinite; }
-  @keyframes blink { 0%,97%,100%{ transform: scaleY(1) } 98%{ transform: scaleY(.1) } }
+  .dragon {
+  position: fixed;
+  bottom: -3vh;
+  width: min(60vmin, 420px);
+  height: auto;
+  filter: drop-shadow(0 20px 40px #000a);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.95;
+}
+
+/* Dragón derecho (mirando a la izquierda →) */
+.dragon-right {
+  right: 0.5vw;
+  transform: scaleX(-1) rotate(-4deg);
+}
+
+/* Dragón izquierdo (mirando a la derecha ←) */
+.dragon-left {
+  left: 0.5vw;
+  transform: rotate(-4deg);
+}
 
   /* MAGICAL BIRTHDAY SURPRISE */
   .birthday-surprise{
@@ -299,15 +314,143 @@
 
   footer{ padding:26px; text-align:center; color:#e6daff88; font-size:12px; position:relative; z-index:5; }
 
-  .candle-mode .glow{ filter: blur(90px) saturate(160%); animation-duration: 32s; }
+/* Glow más intenso y dinámico */
+.candle-mode .glow {
+  filter: blur(40px) saturate(300%) brightness(1.3);
+  animation: glowFlicker 2.5s infinite ease-in-out;
+}
 
-  /* Candle overlay to make the effect obvious */
-  #candleOverlay{ position:fixed; inset:0; pointer-events:none; z-index:90; opacity:0; visibility:hidden; transition:opacity .4s ease, visibility .4s ease;
-    background: radial-gradient(800px 800px at 50% 60%, rgba(255,197,110,0.12) 0%, rgba(0,0,0,0.5) 70%);
-    mix-blend-mode:soft-light; }
-  .candle-mode #candleOverlay{ opacity:1; visibility:visible; }
+/* Overlay cálido y dinámico */
+#candleOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s ease, visibility .4s ease;
+  background: radial-gradient(
+    800px 800px at 50% 60%, 
+    rgba(255,180,80,0.6) 0%,  
+    rgba(50,10,80,0.6) 60%,
+    rgba(0,0,0,0.85) 100%
+  );
+  mix-blend-mode: soft-light;
+}
 
-  /* Small debug badge */
+.candle-mode #candleOverlay {
+  opacity: 1;
+  visibility: visible;
+  animation: candleFlicker 2s infinite ease-in-out, overlayShift 4s infinite ease-in-out alternate;
+}
+
+/* Flicker de la llama */
+@keyframes candleFlicker {
+  0%, 100% { opacity: 0.95; }
+  25%      { opacity: 0.75; }
+  50%      { opacity: 0.85; }
+  75%      { opacity: 0.65; }
+}
+
+/* Movimiento sutil del overlay para más vida */
+@keyframes overlayShift {
+  0%   { transform: translate(0,0) scale(1); }
+  25%  { transform: translate(5px,-3px) scale(1.02); }
+  50%  { transform: translate(-4px,2px) scale(0.98); }
+  75%  { transform: translate(3px,-1px) scale(1.01); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+/* Flicker extra para glow */
+@keyframes glowFlicker {
+  0%,100% { filter: blur(40px) saturate(300%) brightness(1.3); }
+  40%     { filter: blur(45px) saturate(330%) brightness(1.6); }
+  55%     { filter: blur(35px) saturate(280%) brightness(1.1); }
+  70%     { filter: blur(42px) saturate(310%) brightness(1.4); }
+}
+
+/* 📱 iPhone 14 y móviles pequeños (≤ 390px ancho) */
+@media (max-width: 390px) {
+  body {
+    padding: 0.4rem;
+    font-size: 0.85rem;
+  }
+  h1 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+  .dragon {
+    width: min(50vw, 180px); /* dragones más compactos */
+  }
+}
+
+/* 📱 Móviles en general (391px - 600px) */
+@media (min-width: 391px) and (max-width: 600px) {
+  body {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  .dragon {
+    width: min(45vw, 200px);
+  }
+}
+
+/* 📲 Tablets en vertical (601px - 768px) */
+@media (min-width: 601px) and (max-width: 768px) {
+  body {
+    font-size: 1rem;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+  .dragon {
+    width: min(40vw, 220px);
+  }
+}
+
+/* 💻 Tablets en horizontal / laptops chicas (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  body {
+    font-size: 1rem;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  .dragon {
+    width: min(35vw, 250px);
+  }
+}
+
+/* 🖥️ Laptops grandes (1025px - 1440px) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  body {
+    font-size: 1.1rem;
+  }
+  h1 {
+    font-size: 2.3rem;
+  }
+  .dragon {
+    width: min(30vw, 280px);
+  }
+}
+
+/* 🖥️⚡ Monitores 4K y ultrawide (≥ 1441px) */
+@media (min-width: 1441px) {
+  body {
+    font-size: 1.2rem;
+  }
+  h1 {
+    font-size: 2.7rem;
+  }
+  .dragon {
+    width: min(25vw, 320px); /* más proporcionados */
+  }
+}
+
   
 </style>
 </head>
@@ -352,11 +495,92 @@
     <p class="note">When time arrives, the guardian dragon will open the chest and you'll see the surprise.</p>
   </main>
 
-  <svg class="dragon" viewBox="0 0 600 400" aria-hidden="true">
-    <defs><linearGradient id="dragG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9b6cff"/><stop offset="1" stop-color="#ff7ad9"/></linearGradient></defs>
-    <path d="M420 260c50-20 90-70 80-110-6-22-28-36-54-38-30-2-60 12-78 36-14-30-46-50-84-50-60 0-110 44-110 98 0 8 1 16 3 24-30 6-53 32-53 63 0 36 31 65 70 65 16 0 31-5 43-13 18 17 44 28 73 28 49 0 90-27 100-63 3 10 6 20 10 30 4 8 13 13 23 13 14 0 26-10 29-23 3-16-7-29-24-31-11-2-22-4-28-9z" fill="url(#dragG)" opacity=".8"/>
-    <circle class="eye" cx="324" cy="200" r="8" fill="#fff"/>
-  </svg>
+  <svg class="dragon dragon-right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 width="800px" height="800px" viewBox="0 0 260 201" enable-background="new 0 0 260 201" xml:space="preserve">
+   <defs>
+    <!-- Reusamos el mismo degradado -->
+    <linearGradient id="dragonRoyalRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6a0dad"/>
+      <stop offset="50%" stop-color="#f1c40f"/>
+      <stop offset="100%" stop-color="#8b0000"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#dragonRoyalRight)" d="M149,199h-47c2.03-1.37,5.4-4.44,5.4-9.07c0-4.45-1.23-10.78-4.54-19.64c4.24-4.58,7.36-9.96,9.1-15.65
+	c1.98,0.63,4,1.29,6.08,1.98c5.6,1.82,11.68,3.81,18.39,5.61c-3.62,5.24-8.52,10.03-15.13,14.49c-2.4,1.62-3.22,2.7-3.22,5.11
+	c0,3.62,4.61,6.63,9.25,8.04c3.76,1.13,7.82,1.62,11.77,1.62C144,191.49,147.55,195.03,149,199z M218.05,72.03l-4.49-4.3
+	c-3.11-3.67-3.49-9.1-5.91-14.59c-3.52-7.97-8.34-12.64-8.34-12.64c0,5.81-1.95,9.69-1.95,9.69s-6.913-3.684-15.93-2.594
+	c-8.273,0.051-15.984-4.923-19.177-12.833l-0.004-0.012c0,0,0,0.001,0,0.002c0-0.001,0-0.001-0.001-0.002c0,0.002,0,0.003,0,0.005
+	c-0.022,0.096-2.412,10.786,6.841,17.523c-0.141,0.095-0.282,0.191-0.423,0.29c-5.781,1.893-12.294,0.105-16.256-4.751
+	c0,0.002,0.001,0.003,0.002,0.005l-0.003-0.004c0,0-0.919,7.026,3.562,11.238c1.375,1.292,2.884,1.848,4.316,2.004
+	c-2.67,3.911-4.536,8.514-4.637,13.37c-0.29,13.52,8.12,20.92,17.22,30.84c1.53,1.34,2.5,3.33,2.5,5.539
+	c0,4.303-3.962,7.804-8.23,7.374c-4.115-0.414-8.379-4.481-11.266-7.175c-7.329-6.841-12.454-15.849-15.261-25.43
+	c-1.76-6.005-2.62-12.264-2.62-18.519c0-12.514,3.43-24.058,9.213-33.344C129.54,14.043,103.522,2,75,2c-3.054,0-7.021,0.72-10,1
+	c13.029,8.254,23.009,21.897,23.009,38.458c0,14.355-6.497,27.193-16.705,35.738c17.203,2.939,30.931,16.07,34.737,32.962
+	c-8.818,1.353-17.058,3.841-24.699,7.176c-20.862,9.094-36.37,25.717-48.457,34.706c-1.908,1.419-4.804,2.499-7.367,2.499
+	c-8.38,0-12.193-9.026-8.635-15.819c4.915-9.333,19.218-20.384,19.218-29.515c0-7.515-5.694-12.342-9.32-14.656
+	c3.287-2.931,7.286-4.654,11.409-5.135L10.019,80.59l9.843,27.831c0.316-3.949,1.769-7.826,4.343-11.121
+	c3.537,3.285,8.617,10.011,1.405,17.224c-4.74,4.731-8.112,7.083-14.496,12.806c-0.027,0.024-0.051,0.05-0.078,0.074
+	C5.651,131.931,2,138.414,2,146c0,13.635,11.28,24.987,24.915,24.987c7.923,0,14.914-4.354,20.727-9.365
+	c4.583-3.951,9.449-7.745,14.78-10.653c6.91-3.769,14.532-5.576,22.34-5.875c-1.204,11.92-11.267,21.223-23.505,21.223
+	c-3.397,0-6.614-0.718-9.542-2.002c-0.538,2.057-1.113,4.907-1.008,8.023c0.32,9.513,3.383,12.346,3.383,17.592
+	c0,4.629-3.055,7.699-5.09,9.07h47c-1.45-3.973-5.317-7.509-10.219-7.509c-3.942,0-8.002-0.487-11.766-1.624
+	c-4.644-1.403-9.196-3.871-9.196-7.489c0-2.412,1.614-3.895,4.157-3.852c2.407,0.18,5.37,0.318,7.788,0.18
+	c15.684-1.395,29.47-14.543,31.833-29.924c13.101,3.87,27.568,9.741,46.207,12.713c3.75,8.219,8.774,21.149,7.124,28.434
+	c-0.983,4.342-2.892,7.699-4.928,9.07h47c-1.45-3.973-5.48-7.509-10.382-7.509c-3.942,0-8.002-0.487-11.766-1.624
+	c-4.644-1.403-7.156-4.417-7.845-9.067c-0.287-1.939-1.396-12.691-0.516-17.525c-0.044,0.255,7.17-0.451,7.685-0.516
+	c3.472-0.442,6.772-0.84,10.014-2.227c18.028-7.715,25.755-29.56,17.947-47.195c-3.379-7.631-8.97-13.953-15.117-19.486
+	c-4.76-4.285-10.335-7.959-14.539-12.82c-3.53-4.07-2.66-8.4-0.45-10.71c2.68-2.81,8.15-2.97,10.69,0.14
+	c2.45,3,8.39,9.93,11.42,13.45c1.11,1.29,2.9,1.75,4.5,1.16l4.35-1.63l-3.48-1.49c0,0-3.44-7.56-4.68-10.65l11.22,5.61l-0.57,4.76
+	l5.61-5.52C219.24,75.01,219.22,73.15,218.05,72.03z M211,199h47c-1.44-3.97-4.83-7.51-9.73-7.51c-3.94,0-8.04-0.38-11.77-1.62
+	c-8.95-2.99-19.88-22.38-28.66-36.22c-4.06,4.88-9.27,8.77-15.21,11.25c10.52,8.39,23.09,19.46,23.95,25.03
+	C217.26,194.33,213.03,197.63,211,199z M232.169,107.101c7.686,1.971,20.475,1.485,25.831-10.101
+	c-12.767,8.545-22.676,2.046-22.676,2.046s6.064-3.836,5.33-9.26c-16.747,6.282-27.99-3.654-27.99-3.654
+	C215.175,97.767,225.262,105.33,232.169,107.101z"/>
+</svg>
+
+<svg class="dragon dragon-left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+width="800px" height="800px" viewBox="0 0 260 201" enable-background="new 0 0 260 201" xml:space="preserve">
+<defs>
+  <!-- Reusamos el mismo degradado -->
+  <linearGradient id="dragonRoyalLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#6a0dad"/>
+    <stop offset="50%" stop-color="#f1c40f"/>
+    <stop offset="100%" stop-color="#8b0000"/>
+  </linearGradient>
+</defs>
+<path fill="url(#dragonRoyalLeft)" d="M149,199h-47c2.03-1.37,5.4-4.44,5.4-9.07c0-4.45-1.23-10.78-4.54-19.64c4.24-4.58,7.36-9.96,9.1-15.65
+c1.98,0.63,4,1.29,6.08,1.98c5.6,1.82,11.68,3.81,18.39,5.61c-3.62,5.24-8.52,10.03-15.13,14.49c-2.4,1.62-3.22,2.7-3.22,5.11
+c0,3.62,4.61,6.63,9.25,8.04c3.76,1.13,7.82,1.62,11.77,1.62C144,191.49,147.55,195.03,149,199z M218.05,72.03l-4.49-4.3
+c-3.11-3.67-3.49-9.1-5.91-14.59c-3.52-7.97-8.34-12.64-8.34-12.64c0,5.81-1.95,9.69-1.95,9.69s-6.913-3.684-15.93-2.594
+c-8.273,0.051-15.984-4.923-19.177-12.833l-0.004-0.012c0,0,0,0.001,0,0.002c0-0.001,0-0.001-0.001-0.002c0,0.002,0,0.003,0,0.005
+c-0.022,0.096-2.412,10.786,6.841,17.523c-0.141,0.095-0.282,0.191-0.423,0.29c-5.781,1.893-12.294,0.105-16.256-4.751
+c0,0.002,0.001,0.003,0.002,0.005l-0.003-0.004c0,0-0.919,7.026,3.562,11.238c1.375,1.292,2.884,1.848,4.316,2.004
+c-2.67,3.911-4.536,8.514-4.637,13.37c-0.29,13.52,8.12,20.92,17.22,30.84c1.53,1.34,2.5,3.33,2.5,5.539
+c0,4.303-3.962,7.804-8.23,7.374c-4.115-0.414-8.379-4.481-11.266-7.175c-7.329-6.841-12.454-15.849-15.261-25.43
+c-1.76-6.005-2.62-12.264-2.62-18.519c0-12.514,3.43-24.058,9.213-33.344C129.54,14.043,103.522,2,75,2c-3.054,0-7.021,0.72-10,1
+c13.029,8.254,23.009,21.897,23.009,38.458c0,14.355-6.497,27.193-16.705,35.738c17.203,2.939,30.931,16.07,34.737,32.962
+c-8.818,1.353-17.058,3.841-24.699,7.176c-20.862,9.094-36.37,25.717-48.457,34.706c-1.908,1.419-4.804,2.499-7.367,2.499
+c-8.38,0-12.193-9.026-8.635-15.819c4.915-9.333,19.218-20.384,19.218-29.515c0-7.515-5.694-12.342-9.32-14.656
+c3.287-2.931,7.286-4.654,11.409-5.135L10.019,80.59l9.843,27.831c0.316-3.949,1.769-7.826,4.343-11.121
+c3.537,3.285,8.617,10.011,1.405,17.224c-4.74,4.731-8.112,7.083-14.496,12.806c-0.027,0.024-0.051,0.05-0.078,0.074
+C5.651,131.931,2,138.414,2,146c0,13.635,11.28,24.987,24.915,24.987c7.923,0,14.914-4.354,20.727-9.365
+c4.583-3.951,9.449-7.745,14.78-10.653c6.91-3.769,14.532-5.576,22.34-5.875c-1.204,11.92-11.267,21.223-23.505,21.223
+c-3.397,0-6.614-0.718-9.542-2.002c-0.538,2.057-1.113,4.907-1.008,8.023c0.32,9.513,3.383,12.346,3.383,17.592
+c0,4.629-3.055,7.699-5.09,9.07h47c-1.45-3.973-5.317-7.509-10.219-7.509c-3.942,0-8.002-0.487-11.766-1.624
+c-4.644-1.403-9.196-3.871-9.196-7.489c0-2.412,1.614-3.895,4.157-3.852c2.407,0.18,5.37,0.318,7.788,0.18
+c15.684-1.395,29.47-14.543,31.833-29.924c13.101,3.87,27.568,9.741,46.207,12.713c3.75,8.219,8.774,21.149,7.124,28.434
+c-0.983,4.342-2.892,7.699-4.928,9.07h47c-1.45-3.973-5.48-7.509-10.382-7.509c-3.942,0-8.002-0.487-11.766-1.624
+c-4.644-1.403-7.156-4.417-7.845-9.067c-0.287-1.939-1.396-12.691-0.516-17.525c-0.044,0.255,7.17-0.451,7.685-0.516
+c3.472-0.442,6.772-0.84,10.014-2.227c18.028-7.715,25.755-29.56,17.947-47.195c-3.379-7.631-8.97-13.953-15.117-19.486
+c-4.76-4.285-10.335-7.959-14.539-12.82c-3.53-4.07-2.66-8.4-0.45-10.71c2.68-2.81,8.15-2.97,10.69,0.14
+c2.45,3,8.39,9.93,11.42,13.45c1.11,1.29,2.9,1.75,4.5,1.16l4.35-1.63l-3.48-1.49c0,0-3.44-7.56-4.68-10.65l11.22,5.61l-0.57,4.76
+l5.61-5.52C219.24,75.01,219.22,73.15,218.05,72.03z M211,199h47c-1.44-3.97-4.83-7.51-9.73-7.51c-3.94,0-8.04-0.38-11.77-1.62
+c-8.95-2.99-19.88-22.38-28.66-36.22c-4.06,4.88-9.27,8.77-15.21,11.25c10.52,8.39,23.09,19.46,23.95,25.03
+C217.26,194.33,213.03,197.63,211,199z M232.169,107.101c7.686,1.971,20.475,1.485,25.831-10.101
+c-12.767,8.545-22.676,2.046-22.676,2.046s6.064-3.836,5.33-9.26c-16.747,6.282-27.99-3.654-27.99-3.654
+C215.175,97.767,225.262,105.33,232.169,107.101z"/>
+</svg>
+
 
   <!-- Magical Birthday Surprise -->
   <section class="birthday-surprise" id="birthdaySurprise" aria-hidden="true">
@@ -675,42 +899,33 @@
     });
   }
 
-  // MUSIC TOGGLE
-  async function toggleMusic() {
-    try {
-      if (!musicPlaying) {
-        // Create audio element for local file
-        const audio = new Audio('Eden’s Gentle Glow.mp3'); // Cambia 'tu-cancion.mp3' por el nombre de tu archivo
-        audio.volume = 0.3; // Ajusta el volumen (0.0 a 1.0)
-        audio.loop = true; // Repetir la canción
-        
-        await audio.play();
-        currentOscillator = audio; // Reutilizamos esta variable para el audio
-        musicPlaying = true;
-        
-        syncControls('music', true);
-        
-        // Manejar cuando termine la canción (si no está en loop)
-        audio.addEventListener('ended', () => {
-          musicPlaying = false;
-          syncControls('music', false);
-          currentOscillator = null;
-        });
-        
-      } else {
-        if (currentOscillator) {
-          currentOscillator.pause();
-          currentOscillator.currentTime = 0; // Reiniciar al inicio
-          musicPlaying = false;
-          currentOscillator = null;
-        }
-        syncControls('music', false);
-      }
-    } catch(err) {
-      console.log('Error playing audio:', err);
-      syncControls('music', false);
+  // 🎵 Variable global para el audio
+let bgAudio = null;
+
+// MUSIC TOGGLE
+async function toggleMusic() {
+  try {
+    // Si aún no se creó el audio, lo inicializamos
+    if (!bgAudio) {
+      bgAudio = new Audio("Eden’s Gentle Glow.mp3"); // 👈 tu archivo aquí
+      bgAudio.volume = 0.3;
+      bgAudio.loop = true;
     }
+
+    if (!musicPlaying) {
+      await bgAudio.play();        // ▶️ Reanuda desde donde quedó
+      musicPlaying = true;
+      syncControls("music", true);
+    } else {
+      bgAudio.pause();             // ⏸️ Pausa en el punto actual
+      musicPlaying = false;
+      syncControls("music", false);
+    }
+  } catch (err) {
+    console.error("Error al reproducir música:", err);
+    syncControls("music", false);
   }
+}
   
   // CANDLE TOGGLE
   function toggleCandle() {
@@ -1003,8 +1218,9 @@
     }
 
     function animate() {
-      ctx.fillStyle = 'rgba(0,0,0,.16)';
-      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(0,0,0,0)'; // ya no tapa nada
+ctx.fillRect(0, 0, w, h);
+
       
       for (let i = bursts.length - 1; i >= 0; i--) {
         const particles = bursts[i];
