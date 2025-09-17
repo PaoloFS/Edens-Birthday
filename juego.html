@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dragon's Enchanted Archery - Mystical Birthday Quest</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
             --bg1: #0b0613;
@@ -589,6 +590,10 @@
                 <div class="hud-label">Realm Level</div>
                 <div class="hud-value" id="levelCount">1</div>
             </div>
+            <a class="hud-item" href="index.html">
+                <div class="hud-label">Home</div>
+                <div class="hud-value"><i class="fa-solid fa-house"></i></div>
+            </a>
         </div>
 
         <div class="bow-system" id="bowSystem">
@@ -811,17 +816,17 @@
         this.powerUpInterval = setInterval(() => this.spawnPowerUp(), 10000);
     }
 
-restartGame() {
-    this.gameOverModal.style.display = 'none';
-    
+    restartGame() {
+        this.gameOverModal.style.display = 'none';
+
     // Reset game state
-    this.arrows = 15;
-    this.hits = 0;
-    this.score = 0;
-    this.level = 1;
-    this.gameRunning = false;
-    this.gamePaused = false;
-    this.arrowFlying = false;
+        this.arrows = 15;
+        this.hits = 0;
+        this.score = 0;
+        this.level = 1;
+        this.gameRunning = false;
+        this.gamePaused = false;
+        this.arrowFlying = false;
     this.levelChanging = false; // ✅ AGREGAR ESTO
     
     // Clear intervals
@@ -901,94 +906,94 @@ resetGame() {
     this.resetArrowAndBow();
 }
 
-    togglePause() {
-        this.gamePaused = !this.gamePaused;
-        this.pauseBtn.textContent = this.gamePaused ? 'Resume Quest' : 'Mystic Pause';
+togglePause() {
+    this.gamePaused = !this.gamePaused;
+    this.pauseBtn.textContent = this.gamePaused ? 'Resume Quest' : 'Mystic Pause';
 
-        if (this.gamePaused) {
-            this.showMessage('⏸️ Quest Suspended by Ancient Magic');
-        } else {
-            document.getElementById('gameMessage').classList.remove('show');
-        }
+    if (this.gamePaused) {
+        this.showMessage('⏸️ Quest Suspended by Ancient Magic');
+    } else {
+        document.getElementById('gameMessage').classList.remove('show');
     }
+}
 
-    showMessage(text, duration = 3000) {
-        const messageEl = document.getElementById('gameMessage');
-        messageEl.textContent = text;
-        messageEl.classList.add('show');
+showMessage(text, duration = 3000) {
+    const messageEl = document.getElementById('gameMessage');
+    messageEl.textContent = text;
+    messageEl.classList.add('show');
 
-        clearTimeout(this.messageTimeout);
-        this.messageTimeout = setTimeout(() => {
-            messageEl.classList.remove('show');
-        }, duration);
-    }
+    clearTimeout(this.messageTimeout);
+    this.messageTimeout = setTimeout(() => {
+        messageEl.classList.remove('show');
+    }, duration);
+}
 
-    showHelp() {
-        this.showMessage(
-            '🎯 Channel your inner dragon archer! Drag the bow, pull back for power, release to unleash magic! Burst balloons and collect gems for dragon blessings!',
+showHelp() {
+    this.showMessage(
+        '🎯 Channel your inner dragon archer! Drag the bow, pull back for power, release to unleash magic! Burst balloons and collect gems for dragon blessings!',
         10000 // ayuda siempre 10s
         );
 
-    }
-    showModal(title, text) {
+}
+showModal(title, text) {
         // Implementar un modal genérico si es necesario, o usar los existentes.
-    }
+}
 
-    updateUI() {
-        this.arrowCount.textContent = this.arrows;
-        this.hitCount.textContent = this.hits;
-        this.scoreCount.textContent = this.score;
-        this.levelCount.textContent = this.level;
-    }
+updateUI() {
+    this.arrowCount.textContent = this.arrows;
+    this.hitCount.textContent = this.hits;
+    this.scoreCount.textContent = this.score;
+    this.levelCount.textContent = this.level;
+}
 
-    handleStart(e) {
-        if (!this.gameRunning || this.gamePaused || this.arrowFlying) return;
-        this.isDragging = true;
-        this.bow.style.cursor = 'grabbing';
-        
+handleStart(e) {
+    if (!this.gameRunning || this.gamePaused || this.arrowFlying) return;
+    this.isDragging = true;
+    this.bow.style.cursor = 'grabbing';
+
         // Captura las coordenadas iniciales del ratón/dedo
-        this.dragStart = { 
-            x: e.type.includes('mouse') ? e.clientX : e.touches[0].clientX,
-            y: e.type.includes('mouse') ? e.clientY : e.touches[0].clientY
-        };
+    this.dragStart = { 
+        x: e.type.includes('mouse') ? e.clientX : e.touches[0].clientX,
+        y: e.type.includes('mouse') ? e.clientY : e.touches[0].clientY
+    };
         // Desactivar transiciones para evitar saltos visuales
-        this.arrow.style.transition = 'none';
-        this.bow.style.transition = 'none';
-    }
+    this.arrow.style.transition = 'none';
+    this.bow.style.transition = 'none';
+}
 
-    handleMove(e) {
-        if (!this.isDragging || !this.gameRunning || this.gamePaused) return;
+handleMove(e) {
+    if (!this.isDragging || !this.gameRunning || this.gamePaused) return;
 
-        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
 
-        const bowRect = this.bowSystem.getBoundingClientRect();
-        const bowCenterX = bowRect.left + 15;
-        const bowCenterY = bowRect.top + bowRect.height / 2;
+    const bowRect = this.bowSystem.getBoundingClientRect();
+    const bowCenterX = bowRect.left + 15;
+    const bowCenterY = bowRect.top + bowRect.height / 2;
 
-        this.currentAngle = Math.atan2(clientY - bowCenterY, clientX - bowCenterX);
-        this.currentPower = Math.min(this.maxPower, 
-            Math.sqrt(Math.pow(clientX - this.dragStart.x, 2) + Math.pow(clientY - this.dragStart.y, 2)));
+    this.currentAngle = Math.atan2(clientY - bowCenterY, clientX - bowCenterX);
+    this.currentPower = Math.min(this.maxPower, 
+        Math.sqrt(Math.pow(clientX - this.dragStart.x, 2) + Math.pow(clientY - this.dragStart.y, 2)));
 
-        const powerRatio = this.currentPower / this.maxPower;
+    const powerRatio = this.currentPower / this.maxPower;
 
         // Update bow rotation
-        this.bowSystem.style.transform = `translateY(-50%) rotate(${this.currentAngle}rad)`;
-        this.bowSystem.style.filter = `drop-shadow(0 0 ${15 + powerRatio * 10}px #a76cff)`;
+    this.bowSystem.style.transform = `translateY(-50%) rotate(${this.currentAngle}rad)`;
+    this.bowSystem.style.filter = `drop-shadow(0 0 ${15 + powerRatio * 10}px #a76cff)`;
 
         // Update arrow position (pull back effect) - CHANGED TO NEGATIVE VALUE
-        const pullBack = powerRatio * 50;
-        this.arrow.style.transform = `translateY(-50%) translateX(-${pullBack}px) rotate(${this.currentAngle}rad)`;
+    const pullBack = powerRatio * 50;
+    this.arrow.style.transform = `translateY(-50%) translateX(-${pullBack}px) rotate(${this.currentAngle}rad)`;
 
         // Store the launch position
-        this.launchPoint = {
-            x: bowRect.left + (Math.cos(this.currentAngle) * 50),
-            y: bowRect.top + bowRect.height / 2 + (Math.sin(this.currentAngle) * 50)
-        };
+    this.launchPoint = {
+        x: bowRect.left + (Math.cos(this.currentAngle) * 50),
+        y: bowRect.top + bowRect.height / 2 + (Math.sin(this.currentAngle) * 50)
+    };
 
         // Update bow string tension
-        const bowString = document.getElementById('bowString');
-        if (bowString) {
+    const bowString = document.getElementById('bowString');
+    if (bowString) {
             const tension = powerRatio * 30; // Control point offset
             bowString.setAttribute('d', `M 15 15 Q ${15 - tension} 125 15 235`);
         }
@@ -1073,7 +1078,7 @@ resetGame() {
                 this.cleanupArrow(flyingArrow);
             } else if (posX > window.innerWidth || posY > window.innerHeight || posX < 0 || posY < 0) {
                 this.cleanupArrow(flyingArrow);
-                 return;
+                return;
             } else {
                 requestAnimationFrame(animateArrow);
             }
@@ -1082,15 +1087,15 @@ resetGame() {
         animateArrow();
     }
 
-cleanupArrow(arrowElement) {
-    arrowElement.remove();
-    this.arrow.style.opacity = '1';
-    this.arrowFlying = false;
-    this.resetArrowAndBow();
-    
+    cleanupArrow(arrowElement) {
+        arrowElement.remove();
+        this.arrow.style.opacity = '1';
+        this.arrowFlying = false;
+        this.resetArrowAndBow();
+
     // Solo verificar fin de juego
-    this.checkGameEnd();
-}
+        this.checkGameEnd();
+    }
 
     resetArrowAndBow() {
         this.bowSystem.style.transform = `translate(-50%, -50%) rotate(0)`;
@@ -1120,9 +1125,9 @@ cleanupArrow(arrowElement) {
         }
     }
 
-createMagicalTrail(x, y) {
+    createMagicalTrail(x, y) {
     // Paleta más amplia y vibrante
-    const trailColors = [
+        const trailColors = [
         '#a76cff', // púrpura
         '#ff7ad9', // rosa
         '#ffd36e', // dorado
@@ -1153,7 +1158,7 @@ createMagicalTrail(x, y) {
     this.particles.push(particle);
 }
 
-    
+
 spawnBalloons() {
     // ✅ VERIFICAR QUE NO HAYA GLOBOS RESIDUALES
     if (this.balloons.length > 0) {
@@ -1180,22 +1185,22 @@ spawnBalloons() {
 createBalloon() {
     const balloon = document.createElement('div');
     balloon.className = 'balloon floating';
-        
-        const isMobile = window.innerWidth < 768;
-        const size = isMobile ? 70 : 90;
-        const rightBoundary = window.innerWidth * 0.35;
-        const leftBoundary = window.innerWidth * 0.65;
-        
+
+    const isMobile = window.innerWidth < 768;
+    const size = isMobile ? 70 : 90;
+    const rightBoundary = window.innerWidth * 0.35;
+    const leftBoundary = window.innerWidth * 0.65;
+
         // Adjusted balloon size to be more square-like for better SVG fit
-        balloon.style.width = size + 'px';
-        balloon.style.height = size + 'px'; 
-        
+    balloon.style.width = size + 'px';
+    balloon.style.height = size + 'px'; 
+
         // Adjusted initial position to be within the game area
-        balloon.style.left = (window.innerWidth * 0.35 + Math.random() * (window.innerWidth * 0.5 - size)) + 'px';
-        balloon.style.top = (80 + Math.random() * (window.innerHeight - 250 - size)) + 'px';
-        
+    balloon.style.left = (window.innerWidth * 0.35 + Math.random() * (window.innerWidth * 0.5 - size)) + 'px';
+    balloon.style.top = (80 + Math.random() * (window.innerHeight - 250 - size)) + 'px';
+
         // Purple-themed balloon colors
-        const balloonColors = [
+    const balloonColors = [
           { main: '#8b5cf6', shadow: '#7c3aed' },  // Purple
           { main: '#f472b6', shadow: '#ec4899' },  // Pink
           { main: '#3b82f6', shadow: '#2563eb' },  // Blue
@@ -1243,21 +1248,21 @@ createBalloon() {
         
         document.querySelector('.game-container').appendChild(balloon);
         
-const balloonData = {
-        element: balloon,
-        x: parseFloat(balloon.style.left),
-        y: parseFloat(balloon.style.top),
-        vx: (Math.random() - 0.5) * 1.5,
-        vy: (Math.random() - 0.5) * 1.5,
-        wish: this.birthdayWishes[Math.floor(Math.random() * this.birthdayWishes.length)],
-        points: 150 + (this.level * 50)
-    };
-    
-    this.balloons.push(balloonData);
-    
+        const balloonData = {
+            element: balloon,
+            x: parseFloat(balloon.style.left),
+            y: parseFloat(balloon.style.top),
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: (Math.random() - 0.5) * 1.5,
+            wish: this.birthdayWishes[Math.floor(Math.random() * this.birthdayWishes.length)],
+            points: 150 + (this.level * 50)
+        };
+
+        this.balloons.push(balloonData);
+
     // ✅ AGREGAR LOG PARA VERIFICAR
-    console.log(`Globo creado. Total en array ahora: ${this.balloons.length}`);
-}
+        console.log(`Globo creado. Total en array ahora: ${this.balloons.length}`);
+    }
 
     lightenColor(color, percent) {
         const num = parseInt(color.replace("#", ""), 16);
@@ -1305,19 +1310,19 @@ const balloonData = {
         }, 12000);
     }
 
-checkCollisions(arrowPos, arrowElement) {
+    checkCollisions(arrowPos, arrowElement) {
     // Check balloon collisions
-    for (let i = this.balloons.length - 1; i >= 0; i--) {
-        const balloon = this.balloons[i];
-        const balloonRect = balloon.element.getBoundingClientRect();
-        
-        if (arrowPos.x > balloonRect.left && 
-            arrowPos.x < balloonRect.right && 
-            arrowPos.y > balloonRect.top && 
-            arrowPos.y < balloonRect.bottom) {
+        for (let i = this.balloons.length - 1; i >= 0; i--) {
+            const balloon = this.balloons[i];
+            const balloonRect = balloon.element.getBoundingClientRect();
+
+            if (arrowPos.x > balloonRect.left && 
+                arrowPos.x < balloonRect.right && 
+                arrowPos.y > balloonRect.top && 
+                arrowPos.y < balloonRect.bottom) {
 
             // ✅ ELIMINAR GLOBO INMEDIATAMENTE Y VERIFICAR NIVEL
-            this.hitBalloon(balloon, i, arrowPos);
+                this.hitBalloon(balloon, i, arrowPos);
             
             // ✅ VERIFICAR NIVEL DESPUÉS DE ELIMINACIÓN
             setTimeout(() => {
@@ -1347,7 +1352,7 @@ checkCollisions(arrowPos, arrowElement) {
     
     return false;
 }
-    
+
 
 hitBalloon(balloon, index, position) {
     this.hits++;
@@ -1379,41 +1384,41 @@ hitBalloon(balloon, index, position) {
     console.log(`Globos restantes: ${this.balloons.length}`); // Debug
 }
 
-    hitPowerUp(powerUp, index, position) {
+hitPowerUp(powerUp, index, position) {
         // Apply power-up effect
-        if (powerUp.type === 'magic_arrows') {
-            this.arrows += 5;
-            this.showMessage('💎 +5 Enchanted Arrows Bestowed!');
-        } else if (powerUp.type === 'dragon_blessing') {
-            this.score += 300;
-            this.showMessage('🔮 +300 Dragon\'s Divine Blessing!');
-        }
-        
-        // Create golden/magical explosion
-        this.createExplosion(position.x, position.y, '#ffd36e', 25);
-        this.createExplosion(position.x, position.y, '#4df3c5', 20);
-        
-        // Remove power-up
-        powerUp.element.remove();
-        this.powerUps.splice(index, 1);
-        this.updateUI();
+    if (powerUp.type === 'magic_arrows') {
+        this.arrows += 5;
+        this.showMessage('💎 +5 Enchanted Arrows Bestowed!');
+    } else if (powerUp.type === 'dragon_blessing') {
+        this.score += 300;
+        this.showMessage('🔮 +300 Dragon\'s Divine Blessing!');
     }
 
-    createExplosion(x, y, color, count = 25) {
-        for (let i = 0; i < count; i++) {
-            const particle = {
-                x: x,
-                y: y,
-                vx: (Math.random() - 0.5) * 18,
-                vy: (Math.random() - 0.5) * 18,
-                life: 1,
-                decay: 0.015 + Math.random() * 0.02,
-                size: 2 + Math.random() * 5,
-                color: color
-            };
-            this.particles.push(particle);
-        }
+        // Create golden/magical explosion
+    this.createExplosion(position.x, position.y, '#ffd36e', 25);
+    this.createExplosion(position.x, position.y, '#4df3c5', 20);
+
+        // Remove power-up
+    powerUp.element.remove();
+    this.powerUps.splice(index, 1);
+    this.updateUI();
+}
+
+createExplosion(x, y, color, count = 25) {
+    for (let i = 0; i < count; i++) {
+        const particle = {
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 18,
+            vy: (Math.random() - 0.5) * 18,
+            life: 1,
+            decay: 0.015 + Math.random() * 0.02,
+            size: 2 + Math.random() * 5,
+            color: color
+        };
+        this.particles.push(particle);
     }
+}
 
 completeLevel() {
     console.log(`Intentando cambiar nivel. Globos: ${this.balloons.length}, levelChanging: ${this.levelChanging}`);
@@ -1446,53 +1451,53 @@ completeLevel() {
     }, 1500);
 }
 
-    checkGameEnd() {
-        if (this.arrows <= 0 && this.balloons.length > 0) {
+checkGameEnd() {
+    if (this.arrows <= 0 && this.balloons.length > 0) {
             // Game over - no more arrows
-            this.endGame(false);
-        } else if (this.level > 6 && this.balloons.length === 0) {
+        this.endGame(false);
+    } else if (this.level > 6 && this.balloons.length === 0) {
             // Victory - completed all levels
-            this.endGame(true);
-        }
+        this.endGame(true);
+    }
+}
+
+endGame(victory) {
+    this.gameRunning = false;
+    clearInterval(this.powerUpInterval);
+
+    const modal = document.getElementById('gameOverModal');
+    const title = document.getElementById('gameOverTitle');
+    const text = document.getElementById('gameOverText');
+
+    if (victory) {
+        title.textContent = '🏆 Happy Birthday, Dragon Master!';
+        text.textContent = 'You have conquered the mystical realm! The ancient dragons bow before your legendary skill. May all your birthday wishes soar on enchanted wings!';
+    } else {
+        title.textContent = '🎈 Valiant Effort, Noble Archer!';
+        text.textContent = 'Even the greatest dragon masters began as apprentices. Return to hone your mystical archery skills and claim your destiny!';
     }
 
-    endGame(victory) {
-        this.gameRunning = false;
-        clearInterval(this.powerUpInterval);
-        
-        const modal = document.getElementById('gameOverModal');
-        const title = document.getElementById('gameOverTitle');
-        const text = document.getElementById('gameOverText');
-        
-        if (victory) {
-            title.textContent = '🏆 Happy Birthday, Dragon Master!';
-            text.textContent = 'You have conquered the mystical realm! The ancient dragons bow before your legendary skill. May all your birthday wishes soar on enchanted wings!';
-        } else {
-            title.textContent = '🎈 Valiant Effort, Noble Archer!';
-            text.textContent = 'Even the greatest dragon masters began as apprentices. Return to hone your mystical archery skills and claim your destiny!';
-        }
-        
         // Calculate accuracy
-        const totalShots = 15 - this.arrows + this.hits;
-        const accuracy = totalShots > 0 ? Math.round((this.hits / totalShots) * 100) : 0;
-        
-        const finalScore = document.getElementById('finalScore');
-        const finalHits = document.getElementById('finalHits');
-        const finalAccuracy = document.getElementById('finalAccuracy');
-        
-        if (finalScore) finalScore.textContent = this.score;
-        if (finalHits) finalHits.textContent = this.hits;
-        if (finalAccuracy) finalAccuracy.textContent = accuracy + '%';
-        
-        modal.style.display = 'flex';
+    const totalShots = 15 - this.arrows + this.hits;
+    const accuracy = totalShots > 0 ? Math.round((this.hits / totalShots) * 100) : 0;
+
+    const finalScore = document.getElementById('finalScore');
+    const finalHits = document.getElementById('finalHits');
+    const finalAccuracy = document.getElementById('finalAccuracy');
+
+    if (finalScore) finalScore.textContent = this.score;
+    if (finalHits) finalHits.textContent = this.hits;
+    if (finalAccuracy) finalAccuracy.textContent = accuracy + '%';
+
+    modal.style.display = 'flex';
+}
+
+gameLoop() {
+    if (!this.gameRunning) return;
+
+    if (!this.gamePaused) {
+        this.updateBalloons();
     }
-
-    gameLoop() {
-        if (!this.gameRunning) return;
-
-        if (!this.gamePaused) {
-            this.updateBalloons();
-        }
     this.updateParticles(); // Las partículas pueden seguir animándose
     
     requestAnimationFrame(() => this.gameLoop());
