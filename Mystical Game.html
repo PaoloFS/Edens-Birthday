@@ -714,8 +714,6 @@
             this.dragons = ['🐉', '🐲', '🐊', '🦎'];
             this.specialBalloons = ['💎', '✨', '⭐'];
 
-            
-
         // Game state
             this.gameRunning = false;
             this.gamePaused = false;
@@ -771,23 +769,6 @@
         this.updateUI();
         this.createBackgroundParticles();
         this.startBackgroundAnimation();
-     
-    // Limpiar intervalos y animaciones
-    if (this.powerUpInterval) {
-        clearInterval(this.powerUpInterval);
-    }
-    if (this.animationFrame) {
-        cancelAnimationFrame(this.animationFrame);
-    }
-    
-    // Limpiar partículas
-    this.particles = [];
-    
-    // Limpiar canvas
-    if (this.ctx) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
-}
     }
 
     setupEventListeners() {
@@ -1048,67 +1029,63 @@ handleMove(e) {
     }
 
     launchArrow() {
-    const arrowElement = this.arrow;
-    
-    const bowRect = this.bowSystem.getBoundingClientRect();
-    const bowCenterX = bowRect.left + bowRect.width / 2;
-    const bowCenterY = bowRect.top + bowRect.height / 2;
-    
-    const pullBack = (this.currentPower / this.maxPower) * 50;
-    let posX = bowCenterX - pullBack * Math.cos(this.currentAngle);
-    let posY = bowCenterY - pullBack * Math.sin(this.currentAngle);
+        const arrowElement = this.arrow;
+        
+        // Obtiene la posición final de la flecha del arco
+        const bowRect = this.bowSystem.getBoundingClientRect();
+        const bowCenterX = bowRect.left + bowRect.width / 2;
+        const bowCenterY = bowRect.top + bowRect.height / 2;
+        
+        const pullBack = (this.currentPower / this.maxPower) * 50;
+        let posX = bowCenterX - pullBack * Math.cos(this.currentAngle);
+        let posY = bowCenterY - pullBack * Math.sin(this.currentAngle);
 
-    const flyingArrow = arrowElement.cloneNode(true);
-    flyingArrow.style.position = 'fixed';
-    flyingArrow.style.opacity = '1';
-    flyingArrow.style.transition = 'none';
-    
-    flyingArrow.style.left = `${posX}px`;
-    flyingArrow.style.top = `${posY}px`;
-    flyingArrow.style.transform = `rotate(${this.currentAngle}rad)`;
-    
-    arrowElement.style.opacity = '0';
-    this.gameContainer.appendChild(flyingArrow);
-    
-    const initialSpeed = this.currentPower / 8;
-    let velocityX = Math.cos(this.currentAngle) * initialSpeed;
-    let velocityY = Math.sin(this.currentAngle) * initialSpeed;
-    
-    let lastTime = performance.now();
-    
-    const animateArrow = (currentTime) => {
-        if (!this.arrowFlying) return;
+        // Clona la flecha original para el vuelo, manteniendo sus estilos
+        const flyingArrow = arrowElement.cloneNode(true);
+        flyingArrow.style.position = 'fixed';
+        flyingArrow.style.opacity = '1';
+        flyingArrow.style.transition = 'none';
         
-        const deltaTime = (currentTime - lastTime) / 16; // Normalizar para 60 FPS
-        lastTime = currentTime;
-        
-        posX += velocityX * deltaTime;
-        posY += velocityY * deltaTime;
-        velocityY += 0.15 * deltaTime;
-        
+        // Mueve la flecha clonada a la posición inicial
         flyingArrow.style.left = `${posX}px`;
         flyingArrow.style.top = `${posY}px`;
+        flyingArrow.style.transform = `rotate(${this.currentAngle}rad)`;
         
-        const flightAngle = Math.atan2(velocityY, velocityX);
-        flyingArrow.style.transform = `rotate(${flightAngle}rad)`;
+        // Esconde la flecha original y añade la nueva al DOM
+        arrowElement.style.opacity = '0';
+        this.gameContainer.appendChild(flyingArrow);
         
-        // Reducir frecuencia de creación de trail
-        if (Math.random() > 0.7) {
+        const initialSpeed = this.currentPower / 8;
+        let velocityX = Math.cos(this.currentAngle) * initialSpeed;
+        let velocityY = Math.sin(this.currentAngle) * initialSpeed;
+
+        const animateArrow = () => {
+            if (!this.arrowFlying) return;
+            
+            posX += velocityX;
+            posY += velocityY;
+            velocityY += 0.15; // Gravedad
+            
+            flyingArrow.style.left = `${posX}px`;
+            flyingArrow.style.top = `${posY}px`;
+            
+            const flightAngle = Math.atan2(velocityY, velocityX);
+            flyingArrow.style.transform = `rotate(${flightAngle}rad)`;
+            
             this.createMagicalTrail(posX, posY);
-        }
+            
+            if (this.checkCollisions({x: posX, y: posY}, flyingArrow)) {
+                this.cleanupArrow(flyingArrow);
+            } else if (posX > window.innerWidth || posY > window.innerHeight || posX < 0 || posY < 0) {
+                this.cleanupArrow(flyingArrow);
+                return;
+            } else {
+                requestAnimationFrame(animateArrow);
+            }
+        };
         
-        if (this.checkCollisions({x: posX, y: posY}, flyingArrow)) {
-            this.cleanupArrow(flyingArrow);
-        } else if (posX > window.innerWidth || posY > window.innerHeight || posX < 0 || posY < 0) {
-            this.cleanupArrow(flyingArrow);
-            return;
-        } else {
-            requestAnimationFrame(animateArrow);
-        }
-    };
-    
-    requestAnimationFrame(animateArrow);
-}
+        animateArrow();
+    }
 
     cleanupArrow(arrowElement) {
         arrowElement.remove();
@@ -1132,47 +1109,53 @@ handleMove(e) {
     }
 
     createBackgroundParticles() {
-    const container = document.getElementById('bgParticles');
-    const particleTypes = ['star', 'sparkle', 'gem'];
-    
-    // Reducir número inicial de partículas
-    for (let i = 0; i < 15; i++) { // Reducido de 30 a 15
-        setTimeout(() => {
-            const particle = document.createElement('div');
-            const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
-            particle.className = `particle ${type}`;
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 12 + 's';
-            particle.style.animationDuration = (12 + Math.random() * 8) + 's'; // Animaciones más lentas
-            container.appendChild(particle);
-        }, i * 300); // Más espaciado
+        const container = document.getElementById('bgParticles');
+        const particleTypes = ['star', 'sparkle', 'gem'];
+        
+        for (let i = 0; i < 30; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                particle.className = `particle ${type}`;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 12 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 6) + 's';
+                container.appendChild(particle);
+            }, i * 200);
+        }
     }
-}
 
     createMagicalTrail(x, y) {
-    // Reducir frecuencia de creación de partículas
-    if (Math.random() > 0.6) return; // Solo crear 40% de las veces
-    
-    const trailColors = [
-        '#a76cff', '#ff7ad9', '#ffd36e', '#4df3c5', '#7afcff', '#ffffff'
+    // Paleta más amplia y vibrante
+        const trailColors = [
+        '#a76cff', // púrpura
+        '#ff7ad9', // rosa
+        '#ffd36e', // dorado
+        '#4df3c5', // jade
+        '#7afcff', // celeste
+        '#ff6b6b', // rojo mágico
+        '#ffffff'  // destello blanco
     ];
 
+    // Elige un color aleatorio
     const color = trailColors[Math.floor(Math.random() * trailColors.length)];
 
-    // Crear menos partículas por trail
-    for (let i = 0; i < 2; i++) {
-        const particle = {
-            x: x + (Math.random() - 0.5) * 10,
-            y: y + (Math.random() - 0.5) * 10,
-            vx: (Math.random() - 0.5) * 1,
-            vy: (Math.random() - 0.5) * 1,
-            life: 0.8,
-            decay: 0.03,
-            size: 1 + Math.random() * 2,
-            color: color
-        };
-        this.particles.push(particle);
-    }
+    // Partícula mágica
+    const particle = {
+        x: x,
+        y: y,
+        vx: (Math.random() - 0.5) * 1.5, // velocidad más suave
+        vy: (Math.random() - 0.5) * 1.5,
+        life: 1,
+        decay: 0.02 + Math.random() * 0.02, // algunas duran más, otras menos
+        size: 1 + Math.random() * 4, // tamaños variados
+        opacity: 0.7 + Math.random() * 0.3, // brillo irregular
+        color: color,
+        rotation: Math.random() * 360, // ángulo inicial
+        spin: (Math.random() - 0.5) * 10 // rotación mágica
+    };
+
+    this.particles.push(particle);
 }
 
 
@@ -1421,19 +1404,16 @@ hitPowerUp(powerUp, index, position) {
     this.updateUI();
 }
 
-createExplosion(x, y, color, count = 15) { // Reducir count por defecto
-    // Limitar explosiones simultáneas
-    const maxParticlesFromExplosion = Math.min(count, 12);
-    
-    for (let i = 0; i < maxParticlesFromExplosion; i++) {
+createExplosion(x, y, color, count = 25) {
+    for (let i = 0; i < count; i++) {
         const particle = {
             x: x,
             y: y,
-            vx: (Math.random() - 0.5) * 12, // Reducir velocidad
-            vy: (Math.random() - 0.5) * 12,
-            life: 0.8,
-            decay: 0.02 + Math.random() * 0.02,
-            size: 2 + Math.random() * 3,
+            vx: (Math.random() - 0.5) * 18,
+            vy: (Math.random() - 0.5) * 18,
+            life: 1,
+            decay: 0.015 + Math.random() * 0.02,
+            size: 2 + Math.random() * 5,
             color: color
         };
         this.particles.push(particle);
@@ -1515,24 +1495,12 @@ endGame(victory) {
 gameLoop() {
     if (!this.gameRunning) return;
 
-    // Implementar delta time para consistencia entre dispositivos
-    const now = performance.now();
-    const deltaTime = now - (this.lastFrameTime || now);
-    this.lastFrameTime = now;
-
     if (!this.gamePaused) {
-        // Limitar actualizaciones de globos a 60 FPS máximo
-        if (!this.lastBalloonUpdate) this.lastBalloonUpdate = 0;
-        if (now - this.lastBalloonUpdate > 16) { // ~60 FPS
-            this.updateBalloons();
-            this.lastBalloonUpdate = now;
-        }
+        this.updateBalloons();
     }
+    this.updateParticles(); // Las partículas pueden seguir animándose
     
-    this.updateParticles();
-    
-    // Usar requestAnimationFrame de forma más eficiente
-    this.animationFrame = requestAnimationFrame(() => this.gameLoop());
+    requestAnimationFrame(() => this.gameLoop());
 }
 
 updateBalloons() {
@@ -1566,18 +1534,7 @@ updateBalloons() {
 updateParticles() {
     if (!this.ctx) return;
 
-    // Limitar FPS de partículas para reducir carga
-    if (!this.lastParticleUpdate) this.lastParticleUpdate = 0;
-    const now = Date.now();
-    if (now - this.lastParticleUpdate < 33) return; // ~30 FPS para partículas
-    this.lastParticleUpdate = now;
-
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // Limitar número máximo de partículas
-    if (this.particles.length > 150) {
-        this.particles = this.particles.slice(-100); // Mantener solo las más recientes
-    }
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
         const particle = this.particles[i];
@@ -1594,41 +1551,38 @@ updateParticles() {
         }
 
         this.ctx.save();
-        this.ctx.globalAlpha = particle.life * 0.8; // Reducir opacidad para mejor rendimiento
+        this.ctx.globalAlpha = particle.life;
         this.ctx.fillStyle = particle.color;
-        
-        // Reducir shadow blur para mejor rendimiento
-        if (particle.life > 0.5) {
-            this.ctx.shadowBlur = 5;
-            this.ctx.shadowColor = particle.color;
-        }
-        
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = particle.color;
         this.ctx.beginPath();
-        this.ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+        this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         this.ctx.fill();
         this.ctx.restore();
     }
 }
 
 startBackgroundAnimation() {
+        // Continuously add new background particles
     setInterval(() => {
         const container = document.getElementById('bgParticles');
-        if (container && container.children.length < 20) { // Reducido de 40 a 20
+        if (container && container.children.length < 40) {
             const particleTypes = ['star', 'sparkle', 'gem'];
             const particle = document.createElement('div');
             const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
             particle.className = `particle ${type}`;
             particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDuration = (12 + Math.random() * 8) + 's'; // Más lento
+            particle.style.animationDuration = (10 + Math.random() * 6) + 's';
             container.appendChild(particle);
 
+                // Remove particle after animation
             setTimeout(() => {
                 if (particle.parentNode) {
                     particle.remove();
                 }
-            }, 20000); // Tiempo aumentado
+            }, 16000);
         }
-    }, 2500); // Intervalo aumentado de 1500 a 2500ms
+    }, 1500);
 }
 
     // Función de animación del dragón
