@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon's Enchanted Archery - Mystical Birthday Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg1: #0b0613;
+            --bg2: #1a0f2e;
+            --accent: #a76cff;
+            --accent2: #ff7ad9;
+            --gold: #ffd36e;
+            --jade: #4df3c5;
+            --white: #ffffff;
+            --muted: #c9b8ff;
+            --shadow: 0 10px 40px rgba(0,0,0,.45);
+            --heart: #ff74b8;
+            --cosmic-blue: #2563eb;
+            --cosmic-purple: #8b5cf6;
+            --cosmic-pink: #ec4899;
+            --primary-purple: #7c3aed;
+            --light-purple: #c084fc;
+            --dark-purple: #581c87;
+            --bg-gradient: radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg1) 70%);
+            --text-dark: var(--white);
+            --text-light: var(--muted);
+            --success-color: var(--jade);
+            --warning-color: var(--gold);
+            --danger-color: var(--heart);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            user-select: none;
+            color: var(--text-dark);
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background with stars and sparkles */
+        .bg-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 12s infinite linear;
+            opacity: 0;
+        }
+
+        .particle.star {
+            width: 3px;
+            height: 3px;
+            background: var(--gold);
+            box-shadow: 0 0 6px var(--gold);
+        }
+
+        .particle.sparkle {
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .particle.gem {
+            width: 5px;
+            height: 5px;
+            background: var(--jade);
+            box-shadow: 0 0 10px var(--jade);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        @keyframes float {
+            0% { 
+                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 1; 
+                transform: translateY(90vh) translateX(10px) rotate(45deg) scale(1); 
+            }
+            90% { 
+                opacity: 1; 
+                transform: translateY(-10vh) translateX(-10px) rotate(315deg) scale(1); 
+            }
+            100% { 
+                transform: translateY(-100px) translateX(0) rotate(360deg) scale(0); 
+                opacity: 0; 
+            }
+        }
+
+        /* Dragon flying animation */
+        .dragon {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            z-index: 2;
+            animation: dragonFly 25s infinite linear;
+            opacity: 0.7;
+        }
+
+        @keyframes dragonFly {
+            0% { 
+                left: -150px; 
+                top: 20%; 
+                transform: scale(1) scaleX(1); 
+            }
+            25% { 
+                left: 25%; 
+                top: 60%; 
+                transform: scale(0.8) scaleX(1); 
+            }
+            50% { 
+                left: 75%; 
+                top: 30%; 
+                transform: scale(1.2) scaleX(-1); 
+            }
+            75% { 
+                left: 45%; 
+                top: 70%; 
+                transform: scale(0.9) scaleX(-1); 
+            }
+            100% { 
+                left: calc(100% + 150px); 
+                top: 40%; 
+                transform: scale(1) scaleX(-1); 
+            }
+        }
+
+        /* Game HUD with magical theme */
+        .game-hud {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hud-item {
+            background: rgba(16, 6, 31, 0.85);
+            backdrop-filter: blur(15px);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 12px 18px;
+            text-align: center;
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hud-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(167, 108, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .hud-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow), 0 0 25px var(--accent);
+        }
+
+        .hud-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .hud-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 4px;
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Magical bow system */
+        .bow-system {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            transform-origin: 60px center;
+        }
+
+        .bow {
+            width: 120px;
+            height: 250px;
+            cursor: grab;
+            transition: transform 0.2s ease;
+            transform-origin: center center;
+            filter: drop-shadow(0 0 15px var(--accent));
+        }
+
+        .bow:active {
+            cursor: grabbing;
+        }
+
+        .bow svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .arrow {
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 8px;
+            transition: all 0.15s ease;
+            transform-origin: left center;
+            z-index: 51;
+            filter: drop-shadow(0 0 8px var(--gold));
+        }
+
+        .trajectory-line {
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            transform-origin: left center;
+            z-index: 49;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        /* Birthday balloons */
+        .balloon {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 40;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+        }
+
+        .balloon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .balloon.hit {
+            animation: balloonPop 0.8s ease-out forwards;
+        }
+
+        @keyframes balloonPop {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            30% { transform: scale(1.4) rotate(15deg); opacity: 0.9; }
+            60% { transform: scale(1.8) rotate(-10deg); opacity: 0.6; }
+            100% { transform: scale(2.5) rotate(25deg); opacity: 0; }
+        }
+
+        .balloon.floating {
+            animation: balloonFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes balloonFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(3deg); }
+            75% { transform: translateY(-8px) rotate(-2deg); }
+        }
+
+        /* Power-ups: magical gems and crystals */
+        .power-up {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 25px var(--gold), inset 0 0 15px rgba(255, 211, 110, 0.3);
+            animation: powerUpPulse 2.5s ease-in-out infinite;
+            z-index: 35;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .power-up.gem {
+            background: radial-gradient(circle, var(--jade), #2dd4aa);
+        }
+
+        .power-up.crystal {
+            background: radial-gradient(circle, var(--accent), var(--cosmic-purple));
+        }
+
+        @keyframes powerUpPulse {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg); 
+                box-shadow: 0 0 25px var(--gold), inset 0 0 15px rgba(255, 211, 110, 0.3); 
+            }
+            50% { 
+                transform: scale(1.3) rotate(180deg); 
+                box-shadow: 0 0 40px var(--gold), inset 0 0 25px rgba(255, 211, 110, 0.5); 
+            }
+        }
+
+        /* Message system with magical styling */
+        .message-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .game-message {
+            background: rgba(16, 6, 31, 0.95);
+            backdrop-filter: blur(20px);
+            border: 3px solid var(--accent);
+            border-radius: 25px;
+            padding: 30px 40px;
+            text-align: center;
+            box-shadow: var(--shadow), 0 0 40px var(--accent);
+            opacity: 0;
+            transform: scale(0.7) translateY(30px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+            color: var(--white);
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Update the existing CSS styles */
+
+        .game-message::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, var(--accent), var(--accent2), var(--gold), var(--jade));
+            background-size: 200% 200%; /* Make the background larger to allow for movement */
+            border-radius: 25px; /* Add this to match the container's rounded corners */
+            z-index: -1;
+            animation: borderFlow 4s linear infinite; /* Use a new, smoother animation */
+        }
+
+        /* New, more subtle animation for the border */
+        @keyframes borderFlow {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .game-message.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Modals with cosmic theme */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 6, 19, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: rgba(16, 6, 31, 0.95);
+            backdrop-filter: blur(25px);
+            border: 3px solid var(--accent);
+            border-radius: 30px;
+            padding: 45px;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: var(--shadow), 0 0 50px var(--accent);
+            transform: scale(0.8);
+            animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(167, 108, 255, 0.1), transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 122, 217, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+
+        @keyframes modalSlideIn {
+            to { transform: scale(1); }
+        }
+
+        .modal h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 42px;
+            color: var(--accent);
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px var(--accent);
+        }
+
+        .modal p {
+            font-size: 16px;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 18px;
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 700;
+            padding: 18px 35px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(167, 108, 255, 0.4);
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(167, 108, 255, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(-2px);
+        }
+
+        /* Game controls */
+        .game-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: rgba(16, 6, 31, 0.8);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-family: 'Cinzel', serif;
+        }
+
+        .control-btn:hover {
+            background: var(--accent);
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(167, 108, 255, 0.4);
+        }
+
+        /* Effects canvas for particles */
+        .effects-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 30;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .game-hud {
+                top: 15px;
+                right: 15px;
+                gap: 10px;
+            }
+            
+            .hud-item {
+                padding: 10px 15px;
+            }
+            
+            .hud-value {
+                font-size: 22px;
+            }
+            
+            .bow {
+                width: 100px;
+                height: 200px;
+            }
+            
+            .arrow {
+                left: 50px;
+                width: 100px;
+            }
+            
+            .trajectory-line {
+                left: 50px;
+            }
+            
+            .modal {
+                padding: 35px 25px;
+            }
+            
+            .modal h2 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="bg-particles" id="bgParticles"></div>
+
+        <div class="dragon" id="dragon">
+            🐉
+        </div>
+
+        <div class="game-hud">
+            <div class="hud-item">
+                <div class="hud-label">Enchanted Arrows</div>
+                <div class="hud-value" id="arrowCount">15</div>
+            </div>
+            <div class="hud-item">
+                <div class="hud-label">Wishes Burst</div>
+                <div class="hud-value" id="hitCount">0</div>
+            </div>
+            <div class="hud-item">
+                <div class="hud-label">Magic Score</div>
+                <div class="hud-value" id="scoreCount">0</div>
+            </div>
+            <div class="hud-item">
+                <div class="hud-label">Realm Level</div>
+                <div class="hud-value" id="levelCount">1</div>
+            </div>
+            <a class="hud-item" href="index.html">
+                <div class="hud-label">Home</div>
+                <div class="hud-value"><i class="fa-solid fa-house"></i></div>
+            </a>
+        </div>
+
+        <div class="bow-system" id="bowSystem">
+            <div class="trajectory-line" id="trajectoryLine"></div>
+            <div class="bow" id="bow">
+                <svg viewBox="0 0 120 250">
+                    <defs>
+                        <linearGradient id="bowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#a76cff"/>
+                            <stop offset="50%" style="stop-color:#ff7ad9"/>
+                            <stop offset="100%" style="stop-color:#4df3c5"/>
+                        </linearGradient>
+                        <filter id="bowGlow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge> 
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <path d="M 15 15 C 75 70, 75 180, 15 235" stroke="url(#bowGradient)" stroke-width="10" fill="none" filter="url(#bowGlow)"/>
+                    <path d="M 15 15 L 15 235" stroke="#ff7ad9" stroke-width="3" fill="none" id="bowString" filter="url(#bowGlow)"/>
+                </svg>
+            </div>
+        </div>
+        <div class="arrow" id="arrow">
+            <svg viewBox="0 0 120 8" style="overflow: visible;">
+                <defs>
+                    <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ffd36e"/>
+                        <stop offset="80%" style="stop-color:#ff7ad9"/>
+                        <stop offset="100%" style="stop-color:#4df3c5"/>
+                    </linearGradient>
+                    <filter id="arrowGlow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge> 
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <line x1="0" y1="4" x2="105" y2="4" stroke="url(#arrowGradient)" stroke-width="5" filter="url(#arrowGlow)"/>
+                <path d="M 95 0 L 115 4 L 95 8 Z" fill="#4df3c5" filter="url(#arrowGlow)"/>
+                <path d="M 5 1 L 15 4 L 5 7 L 8 4 Z" fill="#ffd36e" filter="url(#arrowGlow)"/>
+                <circle cx="25" cy="4" r="1" fill="#ffffff" opacity="0.9">
+                    <animate attributeName="opacity" values="0.9;0.3;0.9" dur="1s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="50" cy="4" r="0.8" fill="#ffffff" opacity="0.7">
+                    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="1.5s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+
+        <div class="message-container">
+            <div class="game-message" id="gameMessage"></div>
+        </div>
+
+        <div class="game-controls">
+            <button class="control-btn" id="pauseBtn">Mystic Pause</button>
+            <button class="control-btn" id="restartBtn">New Quest</button>
+            <button class="control-btn" id="helpBtn">Ancient Wisdom</button>
+        </div>
+
+        <canvas class="effects-canvas" id="effectsCanvas"></canvas>
+    </div>
+
+    <div class="modal-overlay" id="startModal">
+        <div class="modal">
+            <h2>🐉 Dragon's Enchanted Archery 🎈</h2>
+            <p><strong>Welcome to the Mystical Dragon Realm!</strong></p>
+            <p>Wield your enchanted bow to shoot magical arrows and burst floating balloons filled with pure dragon energy. Each shot fuels your legend in the enchanted skies!</p>
+            <p><strong>Ancient Controls:</strong></p>
+            <p>• Click and drag your mystical bow to aim<br>• Pull back further to channel more power<br>• Release to unleash your enchanted arrow</p>
+            <p>Gather magical gems and crystals to earn special dragon blessings. May your quest be legendary!</p>
+            <button class="btn" id="startGameBtn">Begin Epic Quest</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="gameOverModal" style="display: none;">
+        <div class="modal">
+            <h2 id="gameOverTitle">Quest Complete!</h2>
+            <p id="gameOverText">Your magical prowess has been witnessed!</p>
+            <div style="margin: 25px 0;">
+                <p><strong>Final Magic Score:</strong> <span id="finalScore">0</span></p>
+                <p><strong>Wishes Unleashed:</strong> <span id="finalHits">0</span></p>
+                <p><strong>Dragon's Precision:</strong> <span id="finalAccuracy">0%</span></p>
+            </div>
+            <button class="btn" id="playAgainBtn">Embark New Quest</button>
+        </div>
+    </div>
+
+    <script>
+     class DragonBirthdayArcher {
+        constructor() {
+            this.gameContainer = document.querySelector('.game-container');
+            this.bowSystem = document.getElementById('bowSystem');
+            this.bow = document.getElementById('bow');
+            this.arrow = document.getElementById('arrow');
+            this.trajectoryLine = document.getElementById('trajectoryLine');
+            this.dragon = document.getElementById('dragon');
+            this.hitCount = document.getElementById('hitCount');
+            this.arrowCount = document.getElementById('arrowCount');
+            this.scoreCount = document.getElementById('scoreCount');
+            this.levelCount = document.getElementById('levelCount');
+            this.gameMessage = document.getElementById('gameMessage');
+            this.effectsCanvas = document.getElementById('effectsCanvas');
+            this.startModal = document.getElementById('startModal');
+            this.gameOverModal = document.getElementById('gameOverModal');
+            this.startGameBtn = document.getElementById('startGameBtn');
+            this.restartBtn = document.getElementById('restartBtn');
+            this.pauseBtn = document.getElementById('pauseBtn');
+            this.helpBtn = document.getElementById('helpBtn');
+            this.levelChanging = false;
+
+            this.canvas = document.getElementById('effectsCanvas');
+            this.ctx = this.canvas.getContext('2d');
+
+            this.dragons = ['🐉', '🐲', '🐊', '🦎'];
+            this.specialBalloons = ['💎', '✨', '⭐'];
+
+            
+
+        // Game state
+            this.gameRunning = false;
+            this.gamePaused = false;
+            this.arrows = 15;
+            this.hits = 0;
+            this.score = 0;
+            this.level = 1;
+            this.balloons = [];
+            this.powerUps = [];
+            this.particles = [];
+            this.arrowFlying = false;
+
+        // Bow system
+            this.maxPower = 180;
+            this.currentPower = 0;
+            this.isDragging = false;
+            this.dragStart = { x: 0, y: 0 };
+            this.currentAngle = 0;
+
+        // Birthday wishes in Spanish
+            this.birthdayWishes = [
+              "Pop! 🎉 Surprise inside!",
+              "Boom! ✨ Wish unlocked!",
+              "Smash! 🐉 Magic released!",
+              "Bang! 🎂 Happy vibes!",
+              "Kaboom! 💎 Treasure found!",
+              "Zap! ⚡ Power gained!",
+              "Crack! 🌟 Joy burst!",
+              "Pop! 🚀 Dream launched!",
+              "Boom! 🪄 Magic spark!",
+              "Bang! 🎁 Surprise gift!",
+              "Pop! 🥳 Party time!",
+              "Boom! 🎶 Happy tune!",
+              "Smash! 🍀 Lucky charm!",
+              "Bang! 🌸 Fresh start!",
+              "Zap! 🔮 Secret revealed!",
+              "Pop! 🍫 Sweet treat!",
+              "Boom! 🎇 Sparkle on!",
+              "Smash! 🕊️ Peace drop!",
+              "Bang! 🦄 Magic touch!",
+              "Kaboom! 🎊 Big cheer!"
+          ];
+
+
+          this.init();
+      }
+
+      init() {
+        this.resizeCanvas();
+        this.setupEventListeners();
+        this.showStartModal();
+        this.spawnBalloons();
+        this.updateUI();
+        this.createBackgroundParticles();
+        this.startBackgroundAnimation();
+     
+    // Limpiar intervalos y animaciones
+    if (this.powerUpInterval) {
+        clearInterval(this.powerUpInterval);
+    }
+    if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame);
+    }
+    
+    // Limpiar partículas
+    this.particles = [];
+    
+    // Limpiar canvas
+    if (this.ctx) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+}
+    }
+
+    setupEventListeners() {
+        // CORRECCIÓN: Ahora el evento de arrastre se añade al bow directamente.
+        this.bow.addEventListener('mousedown', this.handleStart.bind(this));
+        this.bow.addEventListener('touchstart', this.handleStart.bind(this), { passive: false });
+        
+        // Eventos en el documento para el movimiento y suelta
+        document.addEventListener('mousemove', this.handleMove.bind(this));
+        document.addEventListener('mouseup', this.handleEnd.bind(this));
+        document.addEventListener('touchmove', this.handleMove.bind(this), { passive: false });
+        document.addEventListener('touchend', this.handleEnd.bind(this));
+
+        // Eventos de botones
+        this.startGameBtn.addEventListener('click', this.startGame.bind(this));
+        this.restartBtn.addEventListener('click', this.restartGame.bind(this));
+        this.pauseBtn.addEventListener('click', this.togglePause.bind(this));
+        this.helpBtn.addEventListener('click', this.showHelp.bind(this));
+        
+        // Play again button if it exists
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        if (playAgainBtn) {
+            playAgainBtn.addEventListener('click', this.restartGame.bind(this));
+        }
+        
+        // Otros
+        window.addEventListener('resize', this.resizeCanvas.bind(this));
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
+
+    resizeCanvas() {
+        if (this.canvas) {
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+        }
+    }
+
+    startGame() {
+        this.startModal.style.display = 'none';
+        this.gameRunning = true;
+        this.resetGame();
+        this.gameLoop();
+        
+        // Spawn power-ups periodically
+        this.powerUpInterval = setInterval(() => this.spawnPowerUp(), 10000);
+    }
+
+    restartGame() {
+        this.gameOverModal.style.display = 'none';
+
+    // Reset game state
+        this.arrows = 15;
+        this.hits = 0;
+        this.score = 0;
+        this.level = 1;
+        this.gameRunning = false;
+        this.gamePaused = false;
+        this.arrowFlying = false;
+    this.levelChanging = false; // ✅ AGREGAR ESTO
+    
+    // Clear intervals
+    if (this.powerUpInterval) {
+        clearInterval(this.powerUpInterval);
+    }
+    
+    // ✅ LIMPIAR COMPLETAMENTE TODOS LOS ARRAYS Y ELEMENTOS
+    this.balloons.forEach(balloon => {
+        if (balloon.element && balloon.element.parentNode) {
+            balloon.element.remove();
+        }
+    });
+    this.balloons = [];
+    
+    this.powerUps.forEach(powerUp => {
+        if (powerUp.element && powerUp.element.parentNode) {
+            powerUp.element.remove();
+        }
+    });
+    this.powerUps = [];
+    this.particles = [];
+    
+    // ✅ LIMPIAR DOM COMPLETAMENTE
+    document.querySelectorAll('.balloon').forEach(el => el.remove());
+    document.querySelectorAll('.power-up').forEach(el => el.remove());
+    
+    // Remove any flying arrows
+    document.querySelectorAll('.arrow').forEach((arrow, index) => {
+        if (index > 0) arrow.remove(); // Keep original arrow
+    });
+    
+    console.log(`Juego reiniciado. Globos: ${this.balloons.length}, PowerUps: ${this.powerUps.length}`);
+    
+    // Reset UI
+    this.updateUI();
+    this.resetArrowAndBow();
+    document.getElementById('gameMessage').classList.remove('show');
+    document.getElementById('pauseBtn').textContent = 'Mystic Pause';
+    
+    // Start new game
+    this.startGame();
+}
+
+resetGame() {
+    this.arrows = 15;
+    this.hits = 0;
+    this.score = 0;
+    this.level = 1;
+    this.gamePaused = false;
+    this.levelChanging = false; // ✅ AGREGAR ESTO
+    this.gameMessage.textContent = '';
+    
+    // ✅ LIMPIAR COMPLETAMENTE TODOS LOS GLOBOS
+    this.balloons.forEach(balloon => {
+        if (balloon.element && balloon.element.parentNode) {
+            balloon.element.remove();
+        }
+    });
+    this.balloons = []; // ✅ VACIAR ARRAY
+    
+    // ✅ LIMPIAR POWER-UPS TAMBIÉN
+    this.powerUps.forEach(powerUp => {
+        if (powerUp.element && powerUp.element.parentNode) {
+            powerUp.element.remove();
+        }
+    });
+    this.powerUps = [];
+    
+    // ✅ LIMPIAR CUALQUIER GLOBO RESTANTE EN EL DOM
+    document.querySelectorAll('.balloon').forEach(el => el.remove());
+    
+    console.log(`Juego reseteado. Globos en array: ${this.balloons.length}`);
+    
+    this.updateUI();
+    this.spawnBalloons();
+    this.resetArrowAndBow();
+}
+
+togglePause() {
+    this.gamePaused = !this.gamePaused;
+    this.pauseBtn.textContent = this.gamePaused ? 'Resume Quest' : 'Mystic Pause';
+
+    if (this.gamePaused) {
+        this.showMessage('⏸️ Quest Suspended by Ancient Magic');
+    } else {
+        document.getElementById('gameMessage').classList.remove('show');
+    }
+}
+
+showMessage(text, duration = 3000) {
+    const messageEl = document.getElementById('gameMessage');
+    messageEl.textContent = text;
+    messageEl.classList.add('show');
+
+    clearTimeout(this.messageTimeout);
+    this.messageTimeout = setTimeout(() => {
+        messageEl.classList.remove('show');
+    }, duration);
+}
+
+showHelp() {
+    this.showMessage(
+        '🎯 Channel your inner dragon archer! Drag the bow, pull back for power, release to unleash magic! Burst balloons and collect gems for dragon blessings!',
+        10000 // ayuda siempre 10s
+        );
+
+}
+showModal(title, text) {
+        // Implementar un modal genérico si es necesario, o usar los existentes.
+}
+
+updateUI() {
+    this.arrowCount.textContent = this.arrows;
+    this.hitCount.textContent = this.hits;
+    this.scoreCount.textContent = this.score;
+    this.levelCount.textContent = this.level;
+}
+
+handleStart(e) {
+    if (!this.gameRunning || this.gamePaused || this.arrowFlying) return;
+    this.isDragging = true;
+    this.bow.style.cursor = 'grabbing';
+
+        // Captura las coordenadas iniciales del ratón/dedo
+    this.dragStart = { 
+        x: e.type.includes('mouse') ? e.clientX : e.touches[0].clientX,
+        y: e.type.includes('mouse') ? e.clientY : e.touches[0].clientY
+    };
+        // Desactivar transiciones para evitar saltos visuales
+    this.arrow.style.transition = 'none';
+    this.bow.style.transition = 'none';
+}
+
+handleMove(e) {
+    if (!this.isDragging || !this.gameRunning || this.gamePaused) return;
+
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+
+    const bowRect = this.bowSystem.getBoundingClientRect();
+    const bowCenterX = bowRect.left + 15;
+    const bowCenterY = bowRect.top + bowRect.height / 2;
+
+    this.currentAngle = Math.atan2(clientY - bowCenterY, clientX - bowCenterX);
+    this.currentPower = Math.min(this.maxPower, 
+        Math.sqrt(Math.pow(clientX - this.dragStart.x, 2) + Math.pow(clientY - this.dragStart.y, 2)));
+
+    const powerRatio = this.currentPower / this.maxPower;
+
+        // Update bow rotation
+    this.bowSystem.style.transform = `translateY(-50%) rotate(${this.currentAngle}rad)`;
+    this.bowSystem.style.filter = `drop-shadow(0 0 ${15 + powerRatio * 10}px #a76cff)`;
+
+        // Update arrow position (pull back effect) - CHANGED TO NEGATIVE VALUE
+    const pullBack = powerRatio * 50;
+    this.arrow.style.transform = `translateY(-50%) translateX(-${pullBack}px) rotate(${this.currentAngle}rad)`;
+
+        // Store the launch position
+    this.launchPoint = {
+        x: bowRect.left + (Math.cos(this.currentAngle) * 50),
+        y: bowRect.top + bowRect.height / 2 + (Math.sin(this.currentAngle) * 50)
+    };
+
+        // Update bow string tension
+    const bowString = document.getElementById('bowString');
+    if (bowString) {
+            const tension = powerRatio * 30; // Control point offset
+            bowString.setAttribute('d', `M 15 15 Q ${15 - tension} 125 15 235`);
+        }
+        
+        // Create and update the trajectory line with a curved path
+// Show trajectory line
+        const trajectoryLine = document.getElementById('trajectoryLine');
+        if (powerRatio > 0.1) {
+            trajectoryLine.style.opacity = Math.min(powerRatio, 0.8);
+            const trajectoryLength = Math.min(300, this.currentPower * 3);
+            trajectoryLine.style.width = trajectoryLength + 'px';
+            trajectoryLine.style.transform = `translateY(-50%) rotate(${this.currentAngle}rad)`;
+        } else {
+            trajectoryLine.style.opacity = '0';
+        }
+    }
+
+    handleEnd() {
+        if (!this.isDragging || !this.gameRunning || this.gamePaused) return;
+        this.isDragging = false;
+        this.bow.style.cursor = 'grab';
+        this.trajectoryLine.style.opacity = '0';
+
+        if (this.currentPower < 30) {
+            this.resetArrowAndBow();
+            return;
+        }
+
+        this.arrows--;
+        this.arrowFlying = true;
+        this.updateUI();
+        this.launchArrow();
+    }
+
+    launchArrow() {
+    const arrowElement = this.arrow;
+    
+    const bowRect = this.bowSystem.getBoundingClientRect();
+    const bowCenterX = bowRect.left + bowRect.width / 2;
+    const bowCenterY = bowRect.top + bowRect.height / 2;
+    
+    const pullBack = (this.currentPower / this.maxPower) * 50;
+    let posX = bowCenterX - pullBack * Math.cos(this.currentAngle);
+    let posY = bowCenterY - pullBack * Math.sin(this.currentAngle);
+
+    const flyingArrow = arrowElement.cloneNode(true);
+    flyingArrow.style.position = 'fixed';
+    flyingArrow.style.opacity = '1';
+    flyingArrow.style.transition = 'none';
+    
+    flyingArrow.style.left = `${posX}px`;
+    flyingArrow.style.top = `${posY}px`;
+    flyingArrow.style.transform = `rotate(${this.currentAngle}rad)`;
+    
+    arrowElement.style.opacity = '0';
+    this.gameContainer.appendChild(flyingArrow);
+    
+    const initialSpeed = this.currentPower / 8;
+    let velocityX = Math.cos(this.currentAngle) * initialSpeed;
+    let velocityY = Math.sin(this.currentAngle) * initialSpeed;
+    
+    let lastTime = performance.now();
+    
+    const animateArrow = (currentTime) => {
+        if (!this.arrowFlying) return;
+        
+        const deltaTime = (currentTime - lastTime) / 16; // Normalizar para 60 FPS
+        lastTime = currentTime;
+        
+        posX += velocityX * deltaTime;
+        posY += velocityY * deltaTime;
+        velocityY += 0.15 * deltaTime;
+        
+        flyingArrow.style.left = `${posX}px`;
+        flyingArrow.style.top = `${posY}px`;
+        
+        const flightAngle = Math.atan2(velocityY, velocityX);
+        flyingArrow.style.transform = `rotate(${flightAngle}rad)`;
+        
+        // Reducir frecuencia de creación de trail
+        if (Math.random() > 0.7) {
+            this.createMagicalTrail(posX, posY);
+        }
+        
+        if (this.checkCollisions({x: posX, y: posY}, flyingArrow)) {
+            this.cleanupArrow(flyingArrow);
+        } else if (posX > window.innerWidth || posY > window.innerHeight || posX < 0 || posY < 0) {
+            this.cleanupArrow(flyingArrow);
+            return;
+        } else {
+            requestAnimationFrame(animateArrow);
+        }
+    };
+    
+    requestAnimationFrame(animateArrow);
+}
+
+    cleanupArrow(arrowElement) {
+        arrowElement.remove();
+        this.arrow.style.opacity = '1';
+        this.arrowFlying = false;
+        this.resetArrowAndBow();
+
+    // Solo verificar fin de juego
+        this.checkGameEnd();
+    }
+
+    resetArrowAndBow() {
+        this.bowSystem.style.transform = `translate(-50%, -50%) rotate(0)`;
+        this.arrow.style.left = '170px';
+        this.arrow.style.top = '50%';
+        this.arrow.style.transform = 'translateY(-50%) translateX(0px)';
+        this.currentAngle = 0;
+        this.currentPower = 0;
+        this.arrow.style.transition = 'all 0.15s ease';
+        this.bow.style.transition = 'transform 0.2s ease';
+    }
+
+    createBackgroundParticles() {
+    const container = document.getElementById('bgParticles');
+    const particleTypes = ['star', 'sparkle', 'gem'];
+    
+    // Reducir número inicial de partículas
+    for (let i = 0; i < 15; i++) { // Reducido de 30 a 15
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+            particle.className = `particle ${type}`;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 12 + 's';
+            particle.style.animationDuration = (12 + Math.random() * 8) + 's'; // Animaciones más lentas
+            container.appendChild(particle);
+        }, i * 300); // Más espaciado
+    }
+}
+
+    createMagicalTrail(x, y) {
+    // Reducir frecuencia de creación de partículas
+    if (Math.random() > 0.6) return; // Solo crear 40% de las veces
+    
+    const trailColors = [
+        '#a76cff', '#ff7ad9', '#ffd36e', '#4df3c5', '#7afcff', '#ffffff'
+    ];
+
+    const color = trailColors[Math.floor(Math.random() * trailColors.length)];
+
+    // Crear menos partículas por trail
+    for (let i = 0; i < 2; i++) {
+        const particle = {
+            x: x + (Math.random() - 0.5) * 10,
+            y: y + (Math.random() - 0.5) * 10,
+            vx: (Math.random() - 0.5) * 1,
+            vy: (Math.random() - 0.5) * 1,
+            life: 0.8,
+            decay: 0.03,
+            size: 1 + Math.random() * 2,
+            color: color
+        };
+        this.particles.push(particle);
+    }
+}
+
+
+spawnBalloons() {
+    // ✅ VERIFICAR QUE NO HAYA GLOBOS RESIDUALES
+    if (this.balloons.length > 0) {
+        console.warn(`¡ADVERTENCIA! Hay ${this.balloons.length} globos residuales. Limpiando...`);
+        this.balloons.forEach(balloon => {
+            if (balloon.element && balloon.element.parentNode) {
+                balloon.element.remove();
+            }
+        });
+        this.balloons = [];
+    }
+    
+    const balloonsToSpawn = 6 + this.level;
+    console.log(`Generando ${balloonsToSpawn} globos para nivel ${this.level}. Array actual: ${this.balloons.length}`);
+    
+    for (let i = 0; i < balloonsToSpawn; i++) {
+        setTimeout(() => {
+            this.createBalloon();
+            console.log(`Globo ${i + 1} creado. Total en array: ${this.balloons.length}`);
+        }, i * 1000);
+    }
+}
+
+createBalloon() {
+    const balloon = document.createElement('div');
+    balloon.className = 'balloon floating';
+
+    const isMobile = window.innerWidth < 768;
+    const size = isMobile ? 70 : 90;
+    const rightBoundary = window.innerWidth * 0.35;
+    const leftBoundary = window.innerWidth * 0.65;
+
+        // Adjusted balloon size to be more square-like for better SVG fit
+    balloon.style.width = size + 'px';
+    balloon.style.height = size + 'px'; 
+
+        // Adjusted initial position to be within the game area
+    balloon.style.left = (window.innerWidth * 0.35 + Math.random() * (window.innerWidth * 0.5 - size)) + 'px';
+    balloon.style.top = (80 + Math.random() * (window.innerHeight - 250 - size)) + 'px';
+
+        // Purple-themed balloon colors
+    const balloonColors = [
+          { main: '#8b5cf6', shadow: '#7c3aed' },  // Purple
+          { main: '#f472b6', shadow: '#ec4899' },  // Pink
+          { main: '#3b82f6', shadow: '#2563eb' },  // Blue
+          { main: '#34d399', shadow: '#059669' },  // Green
+          { main: '#fb923c', shadow: '#f97316' },  // Orange
+          { main: '#fde047', shadow: '#facc15' },  // Yellow
+          { main: '#f87171', shadow: '#dc2626' },  // Red
+          { main: '#06b6d4', shadow: '#0891b2' },  // Cyan
+          { main: '#14b8a6', shadow: '#0d9488' },  // Teal
+          { main: '#a3e635', shadow: '#84cc16' },  // Lime
+          { main: '#9333ea', shadow: '#7e22ce' },  // Violet
+          { main: '#eab308', shadow: '#ca8a04' }   // Golden yellow
+      ];
+
+      const colorSet = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+        const uniqueId = Math.random().toString(36).substring(2, 9); // Create unique ID for SVG
+        
+        balloon.innerHTML = `
+            <svg width="100%" height="100%" viewBox="0 0 90 108" style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));">
+                <defs>
+                    <radialGradient id="balloonGrad${uniqueId}" cx="35%" cy="25%" r="60%">
+                        <stop offset="0%" style="stop-color:${this.lightenColor(colorSet.main, 20)};stop-opacity:1" />
+                        <stop offset="70%" style="stop-color:${colorSet.main};stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:${colorSet.shadow};stop-opacity:1" />
+                    </radialGradient>
+                    <filter id="balloonGlow${uniqueId}">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge> 
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <ellipse cx="45" cy="40" rx="35" ry="38" fill="url(#balloonGrad${uniqueId})" filter="url(#balloonGlow${uniqueId})"/>
+
+                <ellipse cx="35" cy="28" rx="8" ry="12" fill="rgba(255,255,255,0.6)" opacity="0.8"/>
+                <ellipse cx="32" cy="25" rx="3" ry="5" fill="rgba(255,255,255,0.9)"/>
+
+                <path d="M 45 78 L 42 85 L 48 85 Z" fill="${colorSet.shadow}"/>
+
+                <line x1="45" y1="85" x2="45" y2="105" stroke="#666" stroke-width="1" opacity="0.8"/>
+            </svg>
+        `;
+        
+        document.querySelector('.game-container').appendChild(balloon);
+        
+        const balloonData = {
+            element: balloon,
+            x: parseFloat(balloon.style.left),
+            y: parseFloat(balloon.style.top),
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: (Math.random() - 0.5) * 1.5,
+            wish: this.birthdayWishes[Math.floor(Math.random() * this.birthdayWishes.length)],
+            points: 150 + (this.level * 50)
+        };
+
+        this.balloons.push(balloonData);
+
+    // ✅ AGREGAR LOG PARA VERIFICAR
+        console.log(`Globo creado. Total en array ahora: ${this.balloons.length}`);
+    }
+
+    lightenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+
+    spawnPowerUp() {
+        if (!this.gameRunning || this.powerUps.length >= 2) return;
+        
+        const powerUp = document.createElement('div');
+        const isGem = Math.random() < 0.5;
+        powerUp.className = `power-up ${isGem ? 'gem' : 'crystal'}`;
+        
+        powerUp.style.left = (window.innerWidth * 0.3 + Math.random() * (window.innerWidth * 0.5)) + 'px';
+        powerUp.style.top = (120 + Math.random() * (window.innerHeight - 350)) + 'px';
+        
+        powerUp.innerHTML = isGem ? '💎' : '🔮';
+        
+        document.querySelector('.game-container').appendChild(powerUp);
+        
+        const powerUpData = {
+            element: powerUp,
+            x: parseFloat(powerUp.style.left),
+            y: parseFloat(powerUp.style.top),
+            type: isGem ? 'magic_arrows' : 'dragon_blessing'
+        };
+        
+        this.powerUps.push(powerUpData);
+        
+        // Remove power-up after 12 seconds
+        setTimeout(() => {
+            const index = this.powerUps.indexOf(powerUpData);
+            if (index > -1) {
+                this.powerUps.splice(index, 1);
+                if (powerUp.parentNode) {
+                    powerUp.remove();
+                }
+            }
+        }, 12000);
+    }
+
+    checkCollisions(arrowPos, arrowElement) {
+    // Check balloon collisions
+        for (let i = this.balloons.length - 1; i >= 0; i--) {
+            const balloon = this.balloons[i];
+            const balloonRect = balloon.element.getBoundingClientRect();
+
+            if (arrowPos.x > balloonRect.left && 
+                arrowPos.x < balloonRect.right && 
+                arrowPos.y > balloonRect.top && 
+                arrowPos.y < balloonRect.bottom) {
+
+            // ✅ ELIMINAR GLOBO INMEDIATAMENTE Y VERIFICAR NIVEL
+                this.hitBalloon(balloon, i, arrowPos);
+            
+            // ✅ VERIFICAR NIVEL DESPUÉS DE ELIMINACIÓN
+            setTimeout(() => {
+                if (this.balloons.length === 0 && !this.levelChanging && this.gameRunning) {
+                    this.completeLevel();
+                }
+            }, 100); // Pequeño delay para asegurar que el DOM se actualice
+            
+            return true;
+        }
+    }
+
+    // Check power-up collisions
+    for (let i = this.powerUps.length - 1; i >= 0; i--) {
+        const powerUp = this.powerUps[i];
+        const powerUpRect = powerUp.element.getBoundingClientRect();
+
+        if (arrowPos.x > powerUpRect.left && 
+            arrowPos.x < powerUpRect.right && 
+            arrowPos.y > powerUpRect.top && 
+            arrowPos.y < powerUpRect.bottom) {
+
+            this.hitPowerUp(powerUp, i, arrowPos);
+            return false; // Don't stop arrow for power-ups
+        }
+    }
+    
+    return false;
+}
+
+
+hitBalloon(balloon, index, position) {
+    this.hits++;
+    this.score += balloon.points;
+    
+    // Create colorful explosion effect
+    this.createExplosion(position.x, position.y, '#a76cff', 25);
+    this.createExplosion(position.x, position.y, '#ff7ad9', 20);
+    this.createExplosion(position.x, position.y, '#ffd36e', 18);
+    this.createExplosion(position.x, position.y, '#4df3c5', 15);
+    this.createExplosion(position.x, position.y, '#7afcff', 12);
+    this.createExplosion(position.x, position.y, '#ff6b6b', 14);
+    this.createExplosion(position.x, position.y, '#ffffff', 8);
+    this.createExplosion(position.x, position.y, '#ff9e3d', 10);
+    this.createExplosion(position.x, position.y, '#9dff3d', 9);
+    
+    // Remove balloon with pop animation
+    balloon.element.classList.add('hit');
+    
+    // ✅ ELIMINAR GLOBO DEL ARRAY INMEDIATAMENTE
+    this.balloons.splice(index, 1);
+    this.updateUI();
+    
+    // ✅ ELIMINAR ELEMENTO DEL DOM
+    if (balloon.element.parentNode) {
+        balloon.element.remove();
+    }
+    
+    console.log(`Globos restantes: ${this.balloons.length}`); // Debug
+}
+
+hitPowerUp(powerUp, index, position) {
+        // Apply power-up effect
+    if (powerUp.type === 'magic_arrows') {
+        this.arrows += 5;
+        this.showMessage('💎 +5 Enchanted Arrows Bestowed!');
+    } else if (powerUp.type === 'dragon_blessing') {
+        this.score += 300;
+        this.showMessage('🔮 +300 Dragon\'s Divine Blessing!');
+    }
+
+        // Create golden/magical explosion
+    this.createExplosion(position.x, position.y, '#ffd36e', 25);
+    this.createExplosion(position.x, position.y, '#4df3c5', 20);
+
+        // Remove power-up
+    powerUp.element.remove();
+    this.powerUps.splice(index, 1);
+    this.updateUI();
+}
+
+createExplosion(x, y, color, count = 15) { // Reducir count por defecto
+    // Limitar explosiones simultáneas
+    const maxParticlesFromExplosion = Math.min(count, 12);
+    
+    for (let i = 0; i < maxParticlesFromExplosion; i++) {
+        const particle = {
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 12, // Reducir velocidad
+            vy: (Math.random() - 0.5) * 12,
+            life: 0.8,
+            decay: 0.02 + Math.random() * 0.02,
+            size: 2 + Math.random() * 3,
+            color: color
+        };
+        this.particles.push(particle);
+    }
+}
+
+completeLevel() {
+    console.log(`Intentando cambiar nivel. Globos: ${this.balloons.length}, levelChanging: ${this.levelChanging}`);
+    
+    if (this.levelChanging) return;
+    this.levelChanging = true;
+
+    this.level++;
+    this.arrows += 6;
+    this.showMessage(`🎉 Realm ${this.level - 1} Conquered! Ascending to Realm ${this.level}`);
+    this.updateUI();
+
+    console.log(`Nivel cambiado a: ${this.level}`);
+
+    setTimeout(() => {
+        // ✅ VERIFICAR LIMPIEZA ANTES DE GENERAR
+        if (this.balloons.length > 0) {
+            console.warn(`¡Globos residuales detectados! Limpiando ${this.balloons.length} globos...`);
+            this.balloons.forEach(balloon => {
+                if (balloon.element && balloon.element.parentNode) {
+                    balloon.element.remove();
+                }
+            });
+            this.balloons = [];
+        }
+        
+        this.spawnBalloons();
+        this.levelChanging = false;
+        console.log(`Nivel ${this.level} iniciado. Nuevos globos: ${this.balloons.length}`);
+    }, 1500);
+}
+
+checkGameEnd() {
+    if (this.arrows <= 0 && this.balloons.length > 0) {
+            // Game over - no more arrows
+        this.endGame(false);
+    } else if (this.level > 6 && this.balloons.length === 0) {
+            // Victory - completed all levels
+        this.endGame(true);
+    }
+}
+
+endGame(victory) {
+    this.gameRunning = false;
+    clearInterval(this.powerUpInterval);
+
+    const modal = document.getElementById('gameOverModal');
+    const title = document.getElementById('gameOverTitle');
+    const text = document.getElementById('gameOverText');
+
+    if (victory) {
+        title.textContent = '🏆 Happy Birthday, Dragon Master!';
+        text.textContent = 'You have conquered the mystical realm! The ancient dragons bow before your legendary skill. May all your birthday wishes soar on enchanted wings!';
+    } else {
+        title.textContent = '🎈 Valiant Effort, Noble Archer!';
+        text.textContent = 'Even the greatest dragon masters began as apprentices. Return to hone your mystical archery skills and claim your destiny!';
+    }
+
+        // Calculate accuracy
+    const totalShots = 15 - this.arrows + this.hits;
+    const accuracy = totalShots > 0 ? Math.round((this.hits / totalShots) * 100) : 0;
+
+    const finalScore = document.getElementById('finalScore');
+    const finalHits = document.getElementById('finalHits');
+    const finalAccuracy = document.getElementById('finalAccuracy');
+
+    if (finalScore) finalScore.textContent = this.score;
+    if (finalHits) finalHits.textContent = this.hits;
+    if (finalAccuracy) finalAccuracy.textContent = accuracy + '%';
+
+    modal.style.display = 'flex';
+}
+
+gameLoop() {
+    if (!this.gameRunning) return;
+
+    // Implementar delta time para consistencia entre dispositivos
+    const now = performance.now();
+    const deltaTime = now - (this.lastFrameTime || now);
+    this.lastFrameTime = now;
+
+    if (!this.gamePaused) {
+        // Limitar actualizaciones de globos a 60 FPS máximo
+        if (!this.lastBalloonUpdate) this.lastBalloonUpdate = 0;
+        if (now - this.lastBalloonUpdate > 16) { // ~60 FPS
+            this.updateBalloons();
+            this.lastBalloonUpdate = now;
+        }
+    }
+    
+    this.updateParticles();
+    
+    // Usar requestAnimationFrame de forma más eficiente
+    this.animationFrame = requestAnimationFrame(() => this.gameLoop());
+}
+
+updateBalloons() {
+    if (this.gamePaused) return; // No actualizar globos si está pausado
+    
+    this.balloons.forEach(balloon => {
+        balloon.x += balloon.vx;
+        balloon.y += balloon.vy;
+
+        const balloonSize = window.innerWidth < 768 ? 70 : 90;
+        const leftBound = window.innerWidth * 0.35;
+        const rightBound = window.innerWidth - balloonSize;
+        const topBound = 80;
+        const bottomBound = window.innerHeight - 200;
+
+        if (balloon.x <= leftBound || balloon.x >= rightBound) {
+            balloon.vx *= -1;
+            balloon.x = Math.max(leftBound, Math.min(rightBound, balloon.x));
+        }
+
+        if (balloon.y <= topBound || balloon.y >= bottomBound) {
+            balloon.vy *= -1;
+            balloon.y = Math.max(topBound, Math.min(bottomBound, balloon.y));
+        }
+
+        balloon.element.style.left = balloon.x + 'px';
+        balloon.element.style.top = balloon.y + 'px';
+    });
+}
+
+updateParticles() {
+    if (!this.ctx) return;
+
+    // Limitar FPS de partículas para reducir carga
+    if (!this.lastParticleUpdate) this.lastParticleUpdate = 0;
+    const now = Date.now();
+    if (now - this.lastParticleUpdate < 33) return; // ~30 FPS para partículas
+    this.lastParticleUpdate = now;
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Limitar número máximo de partículas
+    if (this.particles.length > 150) {
+        this.particles = this.particles.slice(-100); // Mantener solo las más recientes
+    }
+
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+        const particle = this.particles[i];
+
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vx *= 0.97;
+        particle.vy *= 0.97;
+        particle.life -= particle.decay;
+
+        if (particle.life <= 0) {
+            this.particles.splice(i, 1);
+            continue;
+        }
+
+        this.ctx.save();
+        this.ctx.globalAlpha = particle.life * 0.8; // Reducir opacidad para mejor rendimiento
+        this.ctx.fillStyle = particle.color;
+        
+        // Reducir shadow blur para mejor rendimiento
+        if (particle.life > 0.5) {
+            this.ctx.shadowBlur = 5;
+            this.ctx.shadowColor = particle.color;
+        }
+        
+        this.ctx.beginPath();
+        this.ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+    }
+}
+
+startBackgroundAnimation() {
+    setInterval(() => {
+        const container = document.getElementById('bgParticles');
+        if (container && container.children.length < 20) { // Reducido de 40 a 20
+            const particleTypes = ['star', 'sparkle', 'gem'];
+            const particle = document.createElement('div');
+            const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+            particle.className = `particle ${type}`;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (12 + Math.random() * 8) + 's'; // Más lento
+            container.appendChild(particle);
+
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, 20000); // Tiempo aumentado
+        }
+    }, 2500); // Intervalo aumentado de 1500 a 2500ms
+}
+
+    // Función de animación del dragón
+animateDragon() {
+        // Animation logic if needed
+}
+
+    // Función para mostrar el modal de inicio
+showStartModal() {
+    this.startModal.style.display = 'flex';
+}
+
+}
+
+// Inicializa el juego cuando la página se carga
+window.addEventListener('load', () => {
+    new DragonBirthdayArcher();
+});
+
+// Prevenir menú contextual en móviles
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// Prevenir scroll en móviles
+document.addEventListener('touchmove', (e) => {
+    if (e.target.closest('.modal') === null) {
+        e.preventDefault();
+    }
+}, { passive: false });
+</script>
+</body>
+</html>
