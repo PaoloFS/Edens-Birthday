@@ -48,6 +48,7 @@
         linear-gradient(160deg, var(--bg1), var(--bg2));
       position: relative;
       animation: backgroundShift 20s ease-in-out infinite alternate;
+      cursor: url("Wand B.cur"), auto;
     }
 
     @keyframes backgroundShift {
@@ -968,7 +969,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <div class="name">Balloon Hunt</div>
-          <div class="tag">Draw your bow, aim at the sky & burst enchanted balloons</div>
+          <div class="tag">Master the ancient bow and burst the enchanted balloons</div>
         </div>
       </a>
       
@@ -980,19 +981,19 @@
     </header>
 
     <main class="hero">
-      <h1 class="title">Treasure Countdown</h1>
-      <p class="subtitle">The portal opens on November 12th, 2025 at 13:00</p>
+      <h1 class="title">The Awakening</h1>
+      <p class="subtitle">Two ancient dragons rise • November 12th, 2025 • 13:00</p>
       <section class="countdown" role="timer" aria-live="polite">
         <div class="unit"><div class="num" id="d">00</div><div class="label">days</div></div>
         <div class="unit"><div class="num" id="h">00</div><div class="label">hours</div></div>
         <div class="unit"><div class="num" id="m">00</div><div class="label">minutes</div></div>
         <div class="unit"><div class="num" id="s">00</div><div class="label">seconds</div></div>
       </section>
-      <p class="note">When time arrives, the guardian dragon will open the chest and you'll see the surprise.</p>
+      <p class="note">When time runs out, the twin guardians shall open the portal between worlds. What lies beyond... awaits you.</p>
     </main>
 
     <div class="portal-message" id="portalMessage" aria-hidden="true">
-        <p>The Mystic Portal is Opening!</p>
+        <p>The Portal Opens... Step Through!</p>
     </div>
 
     <svg class="dragon dragon-right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
@@ -1154,10 +1155,18 @@
           try {
             const sub = document.querySelector('.subtitle');
             if(sub){
-              const fmt = new Intl.DateTimeFormat('en-US', { 
-                year:'numeric', month:'long', day:'2-digit', hour:'2-digit', minute:'2-digit' 
-              });
-              sub.textContent = 'The portal opens on ' + fmt.format(target);
+              const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+              const day = target.getDate();
+              const suffix = day === 1 || day === 21 || day === 31 ? 'st' : 
+                            day === 2 || day === 22 ? 'nd' : 
+                            day === 3 || day === 23 ? 'rd' : 'th';
+              const dateStr = `${months[target.getMonth()]} ${day}${suffix}, ${target.getFullYear()}`;
+              const hours = String(target.getHours()).padStart(2, '0');
+              const minutes = String(target.getMinutes()).padStart(2, '0');
+              const timeStr = `${hours}:${minutes}`;
+              
+              sub.textContent = `Two ancient dragons rise • ${dateStr} • ${timeStr}`;
             }
           } catch(err) {
             console.warn('Could not update subtitle:', err);
